@@ -1220,14 +1220,17 @@ document.querySelectorAll('#techFilter .tag-btn').forEach(btn => {
 });
 
 function filterCards() {
-  document.querySelectorAll('#listContainer .card').forEach(card => {
+  const cards = document.querySelectorAll('#listContainer .card');
+  console.log('Filtering', cards.length, 'cards', 'currentTag:', currentTag, 'currentAct:', currentAct, 'currentTech:', currentTech);
+  cards.forEach(card => {
     const tags = JSON.parse(card.dataset.tags || '[]').map(t => t.toLowerCase());
     const act = (card.dataset.act || '').toLowerCase();
     const techs = JSON.parse(card.dataset.techs || '[]').map(t => t.toLowerCase());
     const tagMatch = currentTag === 'all' || tags.includes(currentTag.toLowerCase());
     const actMatch = currentAct === 'all' || act === currentAct.toLowerCase();
     const techMatch = currentTech === 'all' || techs.includes(currentTech.toLowerCase());
-    card.classList.toggle('hidden', !(tagMatch && actMatch && techMatch));
+    const shouldHide = !(tagMatch && actMatch && techMatch);
+    card.classList.toggle('hidden', shouldHide);
   });
 }
 </script>
