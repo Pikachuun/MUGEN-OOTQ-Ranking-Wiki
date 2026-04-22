@@ -20,7 +20,7 @@
   "activation": "StateDef溢出",
   "techniques": [
     "StateDef溢出修复",
-    "API调用多线程:DEF保护",
+    "DEF保护",
     "CNS指回",
     "Player保护",
     "CNS填塞",

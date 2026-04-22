@@ -20,7 +20,7 @@
   "activation": "StateDef+Flag溢出",
   "techniques": [
     "Def指向改",
-    "API调用线程休眠:线程杀手"
+    "线程杀手"
   ],
   "tags": {
     "zh": [
