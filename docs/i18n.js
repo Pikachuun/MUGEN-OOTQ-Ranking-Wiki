@@ -141,7 +141,6 @@ function toggleTheme() {
 
 function init() {
   applyTheme(getStoredTheme());
-  applyLang(getStoredLang());
 
   const themeBtn = document.getElementById("themeToggle");
   if (themeBtn) themeBtn.addEventListener("click", toggleTheme);
@@ -150,6 +149,14 @@ function init() {
   if (langSelect) {
     langSelect.addEventListener("change", e => applyLang(e.target.value));
   }
+
+  if (window.__meta || document.querySelector('.char-card, .glossary-card')) {
+    applyLang(getStoredLang());
+  }
 }
 
-document.addEventListener("DOMContentLoaded", init);
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}

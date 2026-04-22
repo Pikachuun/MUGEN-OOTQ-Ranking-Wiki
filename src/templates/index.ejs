@@ -96,4 +96,8 @@ function updateCards(lang) {
     if (summaryEl && meta.summary) summaryEl.textContent = getField(meta.summary, lang);
   });
 }
+
+if (typeof applyLang === 'function') {
+  applyLang(getStoredLang());
+}
 </script>
