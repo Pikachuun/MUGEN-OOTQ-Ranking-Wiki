@@ -108,7 +108,7 @@
 }
 
 .list-container .card.hidden {
-  display: none;
+  display: none !important;
 }
 
 .card-header {
@@ -180,10 +180,14 @@ function filterCards() {
     const tags = JSON.parse(card.dataset.tags || '[]').map(t => t.toLowerCase());
     const acts = JSON.parse(card.dataset.acts || '[]').map(a => a.toLowerCase());
     const techs = JSON.parse(card.dataset.techs || '[]').map(t => t.toLowerCase());
-    const tagMatch = currentTag === 'all' || tags.includes(currentTag.toLowerCase());
-    const actMatch = currentAct === 'all' || acts.includes(currentAct.toLowerCase());
-    const techMatch = currentTech === 'all' || techs.includes(currentTech.toLowerCase());
+    const tagLower = currentTag.toLowerCase();
+    const actLower = currentAct.toLowerCase();
+    const techLower = currentTech.toLowerCase();
+    const tagMatch = currentTag === 'all' || tags.includes(tagLower);
+    const actMatch = currentAct === 'all' || acts.includes(actLower);
+    const techMatch = currentTech === 'all' || techs.includes(techLower);
     const shouldHide = !(tagMatch && actMatch && techMatch);
+    console.log('Card:', card.href, 'tags:', tags, 'tagMatch:', tagMatch, 'actMatch:', actMatch, 'techMatch:', techMatch, 'shouldHide:', shouldHide);
     card.classList.toggle('hidden', shouldHide);
   });
 }
