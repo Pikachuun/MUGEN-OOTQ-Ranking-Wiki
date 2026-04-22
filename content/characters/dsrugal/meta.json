@@ -5,51 +5,39 @@
     "ja": "dsrugal"
   },
   "summary": {
-    "zh": "论外上位C级参照角色，StateDef溢出型",
-    "en": "Out-of-Topic High-C Reference, StateDef Overflow Type",
-    "ja": "論外上位C級参照キャラクター、StateDef溢出型"
+    "zh": "论外上位C参照角色",
+    "en": "Out-of-Topic HighC Reference Character",
+    "ja": "論外上位C参照キャラクター"
   },
   "ootqLevel": {
     "zh": "论外上位C",
-    "en": "Out-of-Topic High-C",
+    "en": "Out-of-Topic HighC",
     "ja": "論外上位C"
   },
   "ootqTier": "high",
   "origin": "MUGEN",
   "author": "ydccdy氏",
-  "tags": {
-    "zh": [
-      "论外上位",
-      "C级",
-      "StateDef溢出",
-      "Def指向改",
-      "SuperNull",
-      "审核"
-    ],
-    "en": [
-      "Out-of-Topic High",
-      "C-Class",
-      "StateDef Overflow",
-      "Def Redirect",
-      "SuperNull",
-      "Reference"
-    ],
-    "ja": [
-      "論外上位",
-      "C級",
-      "StateDef溢出",
-      "Def指向改",
-      "SuperNull",
-      "Reference"
-    ]
-  },
   "activation": "StateDef溢出",
   "techniques": [
     "Def指向改"
   ],
-  "description": {
-    "zh": "<p>论外上位C级参照角色。ydccdy氏作品，无P数差设定。</p><h2>技术特点</h2><p>在角色选择界面选中时即刻执行StateDef溢出，可以击破论外中位。具备Def指向改能力，可将敌方DEF路径修改。</p><h2>论外中位与上位差距</h2><p>上位角色的启动速度是论外中位完全不能相比的，两者之间的差距是论外分级中最大的。</p>",
-    "en": "<p>Out-of-Topic High-C reference character by ydccdy氏 with no P-number difference setting.</p><h2>Technical Features</h2><p>Executes StateDef overflow immediately when character is selected in the character select screen, can defeat Mid-tier. Has Def redirect capability to modify enemy DEF paths.</p><h2>Gap Between Mid and High</h2><p>The activation speed of High-tier is incomparable to Mid-tier; this gap is the largest in the ranking system.</p>",
-    "ja": "<p>論外上位C級参照キャラクター。ydccdy氏作品、P数差なし設定。</p><h2>技術的特徴</h2><p>キャラクター選択画面て選択時に即座にStateDef溢出を実行し、中位を撃破可能。Def指向改能力で敵のDEFパスを改変できる。</p><h2>中位と上位の差</h2><p>上位の起動速度は中位とは比較になく、両者の差は論外分级において最大。</p>"
-  }
+  "tags": {
+    "zh": [
+      "审核",
+      "论外上位",
+      "C级"
+    ],
+    "en": [
+      "Reference",
+      "High",
+      "C-Class"
+    ],
+    "ja": [
+      "Reference",
+      "論外上位",
+      "C級"
+    ]
+  },
+  "image": "../img/dsrugal.png",
+  "downloadUrl": "https://mugenarchive.com/forums/downloads.php?do=file&id=92929-dsrugal-ydccdy"
 }

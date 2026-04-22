@@ -1,0 +1,44 @@
+{
+  "title": {
+    "zh": "Guanyin-Ancient",
+    "en": "Guanyin-Ancient",
+    "ja": "Guanyin-Ancient"
+  },
+  "summary": {
+    "zh": "论外上位C参照角色",
+    "en": "Out-of-Topic HighC Reference Character",
+    "ja": "論外上位C参照キャラクター"
+  },
+  "ootqLevel": {
+    "zh": "论外上位C",
+    "en": "Out-of-Topic HighC",
+    "ja": "論外上位C"
+  },
+  "ootqTier": "high",
+  "origin": "MUGEN",
+  "author": "ydccdy氏",
+  "activation": "StateDef溢出",
+  "techniques": [
+    "CNS指空",
+    "全局变量Hook"
+  ],
+  "tags": {
+    "zh": [
+      "审核",
+      "论外上位",
+      "C级"
+    ],
+    "en": [
+      "Reference",
+      "High",
+      "C-Class"
+    ],
+    "ja": [
+      "Reference",
+      "論外上位",
+      "C級"
+    ]
+  },
+  "image": "../img/Guanyin-Ancient.png",
+  "downloadUrl": "https://www.andersonkenya1.net/files/file/37481-guanyin-ancients/"
+}

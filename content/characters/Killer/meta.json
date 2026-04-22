@@ -1,0 +1,45 @@
+{
+  "title": {
+    "zh": "-Killer-",
+    "en": "-Killer-",
+    "ja": "-Killer-"
+  },
+  "summary": {
+    "zh": "论外上位B参照角色",
+    "en": "Out-of-Topic HighB Reference Character",
+    "ja": "論外上位B参照キャラクター"
+  },
+  "ootqLevel": {
+    "zh": "论外上位B",
+    "en": "Out-of-Topic HighB",
+    "ja": "論外上位B"
+  },
+  "ootqTier": "high",
+  "origin": "MUGEN",
+  "author": "crazy氏",
+  "activation": "StateDef溢出",
+  "techniques": [
+    "StateDef溢出修复",
+    "CNS指空",
+    "直死"
+  ],
+  "tags": {
+    "zh": [
+      "审核",
+      "论外上位",
+      "B级"
+    ],
+    "en": [
+      "Reference",
+      "High",
+      "B-Class"
+    ],
+    "ja": [
+      "Reference",
+      "論外上位",
+      "B級"
+    ]
+  },
+  "image": "../img/-Killer-.png",
+  "downloadUrl": "https://drive.google.com/file/d/16xZqpoA01UFNqRbqu1QemyWKOIqz9uAF/view?usp=drive_link"
+}

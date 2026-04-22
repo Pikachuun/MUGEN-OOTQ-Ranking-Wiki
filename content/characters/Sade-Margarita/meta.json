@@ -1,0 +1,38 @@
+{
+  "title": {
+    "zh": "Sade Margarita",
+    "en": "Sade Margarita",
+    "ja": "Sade Margarita"
+  },
+  "summary": {
+    "zh": "接近超论外下位参照角色",
+    "en": "Near Super-Low Reference Character",
+    "ja": "接近超論外下位参照キャラクター"
+  },
+  "ootqLevel": {
+    "zh": "接近超论外下位",
+    "en": "Near Super-Low",
+    "ja": "接近超論外下位"
+  },
+  "ootqTier": "approaching-low",
+  "origin": "MUGEN",
+  "author": "ydccdy氏",
+  "activation": "def溢出",
+  "techniques": [
+    "未知"
+  ],
+  "tags": {
+    "zh": [
+      "审核",
+      "接近超论外下位"
+    ],
+    "en": [
+      "Reference",
+      "Super-Low"
+    ],
+    "ja": [
+      "Reference",
+      "接近超論外下位"
+    ]
+  }
+}

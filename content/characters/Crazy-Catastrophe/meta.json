@@ -1,0 +1,48 @@
+{
+  "title": {
+    "zh": "Crazy-Catastrophe",
+    "en": "Crazy-Catastrophe",
+    "ja": "Crazy-Catastrophe"
+  },
+  "summary": {
+    "zh": "论外中位C参照角色",
+    "en": "Out-of-Topic MidC Reference Character",
+    "ja": "論外中位C参照キャラクター"
+  },
+  "ootqLevel": {
+    "zh": "论外中位C",
+    "en": "Out-of-Topic MidC",
+    "ja": "論外中位C"
+  },
+  "ootqTier": "mid",
+  "origin": "MUGEN",
+  "author": "熄废人氏",
+  "activation": "4CA启动",
+  "techniques": [
+    "DTC型亲捏造:直死",
+    "强制Palno弄",
+    "强制Damage",
+    "强制落下",
+    "强制投",
+    "强制胜利"
+  ],
+  "tags": {
+    "zh": [
+      "审核",
+      "论外中位",
+      "C级"
+    ],
+    "en": [
+      "Reference",
+      "Mid",
+      "C-Class"
+    ],
+    "ja": [
+      "Reference",
+      "論外中位",
+      "C級"
+    ]
+  },
+  "image": "../img/Crazy-Catastrophe.png",
+  "downloadUrl": "https://uu.getuploader.com/oki001/download/19"
+}

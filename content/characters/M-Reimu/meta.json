@@ -5,45 +5,19 @@
     "ja": "M-Reimu ver3.11"
   },
   "summary": {
-    "zh": "论外中位A参照角色，StateDef溢出+变量扩张型亲捏造",
-    "en": "Out-of-Topic Mid-A Reference, StateDef Overflow + Variable Expansion",
-    "ja": "論外中位A参照キャラクター、StateDef溢出+変数拡張型親捏造"
+    "zh": "论外中位A参照角色",
+    "en": "Out-of-Topic MidA Reference Character",
+    "ja": "論外中位A参照キャラクター"
   },
   "ootqLevel": {
     "zh": "论外中位A",
-    "en": "Out-of-Topic Mid-A",
+    "en": "Out-of-Topic MidA",
     "ja": "論外中位A"
   },
   "ootqTier": "mid",
   "origin": "MUGEN",
   "author": "熄废人氏",
-  "tags": {
-    "zh": [
-      "论外中位",
-      "A级",
-      "StateDef溢出",
-      "变量扩张型亲捏造",
-      "SuperNull",
-      "审核"
-    ],
-    "en": [
-      "Out-of-Topic Mid",
-      "A-Class",
-      "StateDef Overflow",
-      "Variable Expansion",
-      "SuperNull",
-      "Reference"
-    ],
-    "ja": [
-      "論外中位",
-      "A级",
-      "StateDef溢出",
-      "変数拡張型親捏造",
-      "SuperNull",
-      "Reference"
-    ]
-  },
-  "activation": "StateDef溢出+4CA",
+  "activation": "StateDef溢出+4CA启动",
   "techniques": [
     "变量扩张型亲捏造:直死",
     "NOKO解除",
@@ -51,9 +25,21 @@
     "全领域Player消去",
     "API调用源代码修改:CNS指回"
   ],
-  "description": {
-    "zh": "<p>论外中位A级参照角色中最具代表性的角色之一。熄废人氏作品，12P使用。</p><h2>技术特点</h2><p>结合StateDef溢出启动与变量扩张型亲捏造，具备直死、全领域Player消去等高级攻击能力。</p><h2>溢出修复</h2><p>使用API调用对CNS进行源代码修改，可执行CNS指回防御。</p>",
-    "en": "<p>One of the most representative Out-of-Topic Mid-A reference characters. By 熄废人氏, used as 12P.</p><h2>Technical Features</h2><p>Combines StateDef overflow activation with variable expansion parent-fabrication, possessing instant death and full-domain Player erasure capabilities.</p><h2>Overflow Fix</h2><p>Uses API calls to modify CNS source code, enabling CNS redirection defense.</p>",
-    "ja": "<p>論外中位A级参照キャラクターの中で最も代表的な一人。熄廃人氏作品、12P使用。</p><h2>技術的特徴</h2><p>StateDef溢出起動と変数拡張型親捏造を組み合わせ、直死、全領域Player消去等の高度な攻撃能力を持つ。</p><h2>溢出修復</h2><p>API呼び出しでCNSソースコードを改変し、CNS指回防御を実行可能。</p>"
+  "tags": {
+    "zh": [
+      "审核",
+      "论外中位",
+      "A级"
+    ],
+    "en": [
+      "Reference",
+      "Mid",
+      "A-Class"
+    ],
+    "ja": [
+      "Reference",
+      "論外中位",
+      "A級"
+    ]
   }
 }

@@ -1,0 +1,38 @@
+{
+  "title": {
+    "zh": "Undefined Universe (4.3b)",
+    "en": "Undefined Universe (4.3b)",
+    "ja": "Undefined Universe (4.3b)"
+  },
+  "summary": {
+    "zh": "接近超论外中位参照角色",
+    "en": "Near Super-Mid Reference Character",
+    "ja": "接近超論外中位参照キャラクター"
+  },
+  "ootqLevel": {
+    "zh": "接近超论外中位",
+    "en": "Near Super-Mid",
+    "ja": "接近超論外中位"
+  },
+  "ootqTier": "approaching-mid",
+  "origin": "MUGEN",
+  "author": "Minase&&N2L氏",
+  "activation": "Alleg40劫持",
+  "techniques": [
+    "未知"
+  ],
+  "tags": {
+    "zh": [
+      "审核",
+      "接近超论外中位"
+    ],
+    "en": [
+      "Reference",
+      "Super-Mid"
+    ],
+    "ja": [
+      "Reference",
+      "接近超論外中位"
+    ]
+  }
+}

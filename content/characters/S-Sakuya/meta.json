@@ -5,44 +5,18 @@
     "ja": "S-Sakuya"
   },
   "summary": {
-    "zh": "论外中位C级参照角色，多重DTC亲捏造型",
-    "en": "Out-of-Topic Mid-C Reference, Multi DTC Parent-Fabrication",
-    "ja": "論外中位C級参照キャラクター、多重DTC親捏造型"
+    "zh": "论外中位C参照角色",
+    "en": "Out-of-Topic MidC Reference Character",
+    "ja": "論外中位C参照キャラクター"
   },
   "ootqLevel": {
     "zh": "论外中位C",
-    "en": "Out-of-Topic Mid-C",
+    "en": "Out-of-Topic MidC",
     "ja": "論外中位C"
   },
   "ootqTier": "mid",
   "origin": "MUGEN",
   "author": "熄废人氏",
-  "tags": {
-    "zh": [
-      "论外中位",
-      "C级",
-      "4CA启动",
-      "DTC型亲捏造",
-      "直死",
-      "审核"
-    ],
-    "en": [
-      "Out-of-Topic Mid",
-      "C-Class",
-      "4CA Activation",
-      "DTC Parent-Fabrication",
-      "Instant Death",
-      "Reference"
-    ],
-    "ja": [
-      "論外中位",
-      "C級",
-      "4CA起動",
-      "DTC型親捏造",
-      "直死",
-      "Reference"
-    ]
-  },
   "activation": "4CA启动",
   "techniques": [
     "DTC型亲捏造:直死",
@@ -52,9 +26,23 @@
     "强制落下",
     "强制变数弄"
   ],
-  "description": {
-    "zh": "<p>论外中位C级参照角色。熄废人氏的12P角色。</p><h2>技术特点</h2><p>采用4CA启动方式，具备多重DTC型亲捏造能力，可执行直死、强制落下等多种攻击。</p><h2>防御难度</h2><p>相比论外下位，中位角色带有阻止敌方代码的攻击能力。</p>",
-    "en": "<p>Out-of-Topic Mid-C reference character. 熄废人氏's 12P character.</p><h2>Technical Features</h2><p>Uses 4CA activation with multi-layer DTC parent-fabrication capable of instant death, forced drop and other attacks.</p><h2>Defense Difficulty</h2><p>Compared to Low tier, Mid tier characters can interrupt enemy code execution.</p>",
-    "ja": "<p>論外中位C級参照キャラクター。熄廃人氏の12Pキャラクター。</p><h2>技術的特徴</h2><p>4CA起動方式で、直死、強制落下等多种の攻撃が可能な多重DTC型親捏造能力を所持。</p><h2>防御難易度</h2><p>下位と比較して、中位キャラクターは敵コード的攻击を阻止する能力を持つ。</p>"
-  }
+  "tags": {
+    "zh": [
+      "审核",
+      "论外中位",
+      "C级"
+    ],
+    "en": [
+      "Reference",
+      "Mid",
+      "C-Class"
+    ],
+    "ja": [
+      "Reference",
+      "論外中位",
+      "C級"
+    ]
+  },
+  "image": "../img/S-Sakuya.png",
+  "downloadUrl": "https://uu.getuploader.com/oki001/download/34"
 }

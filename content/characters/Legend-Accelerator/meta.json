@@ -1,0 +1,44 @@
+{
+  "title": {
+    "zh": "Legend Accelerator",
+    "en": "Legend Accelerator",
+    "ja": "Legend Accelerator"
+  },
+  "summary": {
+    "zh": "论外下位B参照角色",
+    "en": "Out-of-Topic LowB Reference Character",
+    "ja": "論外下位B参照キャラクター"
+  },
+  "ootqLevel": {
+    "zh": "论外下位B",
+    "en": "Out-of-Topic LowB",
+    "ja": "論外下位B"
+  },
+  "ootqTier": "low",
+  "origin": "MUGEN",
+  "author": "otika氏",
+  "activation": "512超越启动",
+  "techniques": [
+    "DTC型亲捏造:冻结解除",
+    "直死"
+  ],
+  "tags": {
+    "zh": [
+      "审核",
+      "论外下位",
+      "B级"
+    ],
+    "en": [
+      "Reference",
+      "Low",
+      "B-Class"
+    ],
+    "ja": [
+      "Reference",
+      "論外下位",
+      "B級"
+    ]
+  },
+  "image": "../img/Legend Accelerator.png",
+  "downloadUrl": "https://mugenarchive.com/forums/downloads.php?do=file&id=46914-legend-accelerator-otika"
+}

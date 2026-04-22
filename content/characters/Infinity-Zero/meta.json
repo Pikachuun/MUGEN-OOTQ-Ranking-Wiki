@@ -5,51 +5,39 @@
     "ja": "Infinity-Zero"
   },
   "summary": {
-    "zh": "论外下位A参照角色，%N启动型复合攻击角色",
-    "en": "Out-of-Topic Low-A Reference, %N activation compound attack type",
-    "ja": "論外下位A参照キャラクター、%N起動型複合攻撃"
+    "zh": "论外下位A参照角色",
+    "en": "Out-of-Topic LowA Reference Character",
+    "ja": "論外下位A参照キャラクター"
   },
   "ootqLevel": {
     "zh": "论外下位A",
-    "en": "Out-of-Topic Low-A",
+    "en": "Out-of-Topic LowA",
     "ja": "論外下位A"
   },
   "ootqTier": "low",
   "origin": "MUGEN",
   "author": "熄废人氏",
-  "tags": {
-    "zh": [
-      "论外下位",
-      "A级",
-      "%N启动",
-      "DTC型亲捏造",
-      "阶段增长",
-      "审核"
-    ],
-    "en": [
-      "Out-of-Topic Low",
-      "A-Class",
-      "%N Activation",
-      "DTC Parent-Fabrication",
-      "Stage Growth",
-      "Reference"
-    ],
-    "ja": [
-      "論外下位",
-      "A级",
-      "%N起動",
-      "DTC型親捏造",
-      "段階成長",
-      "Reference"
-    ]
-  },
   "activation": "%N启动",
   "techniques": [
     "DTC型亲捏造:随阶段增长复合攻击"
   ],
-  "description": {
-    "zh": "<p>论外下位A参照角色。熄废人氏作品，无P数差设定。</p><h2>技术特点</h2><p>使用DTC型亲捏造技术，攻击随游戏阶段增长而增强，形成复合攻击体系。</p>",
-    "en": "<p>Out-of-Topic Low-A reference character by 熄废人氏 with no P-number difference setting.</p><h2>Technical Features</h2><p>Uses DTC parent-fabrication technique; attacks intensify with game stage progression, forming a compound attack system.</p>",
-    "ja": "<p>論外下位A参照キャラクター。熄廃人氏作品、P数差なし設定。</p><h2>技術的特徴</h2><p>DTC型親捏造技術を使用し、ゲーム段階と共に攻撃が強化し複合攻撃体系を形成。</p>"
-  }
+  "tags": {
+    "zh": [
+      "审核",
+      "论外下位",
+      "A级"
+    ],
+    "en": [
+      "Reference",
+      "Low",
+      "A-Class"
+    ],
+    "ja": [
+      "Reference",
+      "論外下位",
+      "A級"
+    ]
+  },
+  "image": "../img/Infinity-Zero.png",
+  "downloadUrl": "https://uu.getuploader.com/oki001/download/24"
 }

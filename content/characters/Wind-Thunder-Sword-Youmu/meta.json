@@ -1,0 +1,45 @@
+{
+  "title": {
+    "zh": "Wind Thunder Sword Youmu",
+    "en": "Wind Thunder Sword Youmu",
+    "ja": "Wind Thunder Sword Youmu"
+  },
+  "summary": {
+    "zh": "论外下位B参照角色",
+    "en": "Out-of-Topic LowB Reference Character",
+    "ja": "論外下位B参照キャラクター"
+  },
+  "ootqLevel": {
+    "zh": "论外下位B",
+    "en": "Out-of-Topic LowB",
+    "ja": "論外下位B"
+  },
+  "ootqTier": "low",
+  "origin": "MUGEN",
+  "author": "Kousa氏",
+  "activation": "4CA启动",
+  "techniques": [
+    "变量扩张型亲捏造:强制永续",
+    "直死",
+    "LIFE弄"
+  ],
+  "tags": {
+    "zh": [
+      "审核",
+      "论外下位",
+      "B级"
+    ],
+    "en": [
+      "Reference",
+      "Low",
+      "B-Class"
+    ],
+    "ja": [
+      "Reference",
+      "論外下位",
+      "B級"
+    ]
+  },
+  "image": "../img/Wind Thunder Sword Youmu.png",
+  "downloadUrl": "https://www.mediafire.com/file/1qzyfcc18dcthfs/Wind_Thunder_Sword_Youmu.zip/file"
+}

@@ -1,0 +1,40 @@
+{
+  "title": {
+    "zh": "Vinzelles-SPBOF",
+    "en": "Vinzelles-SPBOF",
+    "ja": "Vinzelles-SPBOF"
+  },
+  "summary": {
+    "zh": "接近超论外下位参照角色",
+    "en": "Near Super-Low Reference Character",
+    "ja": "接近超論外下位参照キャラクター"
+  },
+  "ootqLevel": {
+    "zh": "接近超论外下位",
+    "en": "Near Super-Low",
+    "ja": "接近超論外下位"
+  },
+  "ootqTier": "approaching-low",
+  "origin": "MUGEN",
+  "author": "AHZ氏",
+  "activation": "SFF溢出",
+  "techniques": [
+    "ST文件无效化"
+  ],
+  "tags": {
+    "zh": [
+      "审核",
+      "接近超论外下位"
+    ],
+    "en": [
+      "Reference",
+      "Super-Low"
+    ],
+    "ja": [
+      "Reference",
+      "接近超論外下位"
+    ]
+  },
+  "image": "../img/Vinzelles-SPBOF.png",
+  "downloadUrl": "https://mopemope.lanzouu.com/iBF8C3fhl47i"
+}

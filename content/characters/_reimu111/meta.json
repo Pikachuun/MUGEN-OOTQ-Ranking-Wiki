@@ -1,0 +1,43 @@
+{
+  "title": {
+    "zh": "_reimu111",
+    "en": "_reimu111",
+    "ja": "_reimu111"
+  },
+  "summary": {
+    "zh": "接近超论外下位参照角色",
+    "en": "Near Super-Low Reference Character",
+    "ja": "接近超論外下位参照キャラクター"
+  },
+  "ootqLevel": {
+    "zh": "接近超论外下位",
+    "en": "Near Super-Low",
+    "ja": "接近超論外下位"
+  },
+  "ootqTier": "approaching-low",
+  "origin": "MUGEN",
+  "author": "zhnm氏",
+  "activation": "ZIP溢出",
+  "techniques": [
+    "地址转移",
+    "大量地址改源",
+    "游戏内联Call调用",
+    "多线程锁值"
+  ],
+  "tags": {
+    "zh": [
+      "审核",
+      "接近超论外下位"
+    ],
+    "en": [
+      "Reference",
+      "Super-Low"
+    ],
+    "ja": [
+      "Reference",
+      "接近超論外下位"
+    ]
+  },
+  "image": "../img/_reimu111.png",
+  "downloadUrl": "https://wwpr.lanzout.com/b0fpe398f"
+}

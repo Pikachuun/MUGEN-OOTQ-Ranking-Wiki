@@ -1,0 +1,40 @@
+{
+  "title": {
+    "zh": "SuperPony",
+    "en": "SuperPony",
+    "ja": "SuperPony"
+  },
+  "summary": {
+    "zh": "接近超论外中位参照角色",
+    "en": "Near Super-Mid Reference Character",
+    "ja": "接近超論外中位参照キャラクター"
+  },
+  "ootqLevel": {
+    "zh": "接近超论外中位",
+    "en": "Near Super-Mid",
+    "ja": "接近超論外中位"
+  },
+  "ootqTier": "approaching-mid",
+  "origin": "MUGEN",
+  "author": "YC0_Xa氏",
+  "activation": "Alleg40劫持",
+  "techniques": [
+    "替换主程序文件"
+  ],
+  "tags": {
+    "zh": [
+      "审核",
+      "接近超论外中位"
+    ],
+    "en": [
+      "Reference",
+      "Super-Mid"
+    ],
+    "ja": [
+      "Reference",
+      "接近超論外中位"
+    ]
+  },
+  "image": "../img/SuperPony.png",
+  "downloadUrl": "https://www.andersonkenya1.net/files/file/37647-superpony/"
+}

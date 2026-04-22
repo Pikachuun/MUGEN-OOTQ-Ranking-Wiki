@@ -5,33 +5,40 @@
     "ja": "duang"
   },
   "summary": {
-    "zh": "论外下位C级参照角色，%n启动型角色",
-    "en": "Out-of-Topic Low-C Reference Character, %n activation type",
-    "ja": "論外下位C級参照キャラクター、%n起動型"
+    "zh": "论外下位C参照角色",
+    "en": "Out-of-Topic LowC Reference Character",
+    "ja": "論外下位C参照キャラクター"
   },
   "ootqLevel": {
     "zh": "论外下位C",
-    "en": "Out-of-Topic Low-C",
+    "en": "Out-of-Topic LowC",
     "ja": "論外下位C"
   },
   "ootqTier": "low",
   "origin": "MUGEN",
   "author": "Hell氏+Yui氏",
-  "tags": [
-    "论外下位",
-    "C级",
-    "%n启动",
-    "强制胜利",
-    "RoundTimer改"
-  ],
   "activation": "%n启动",
   "techniques": [
     "强制胜利",
     "RoundTimer改"
   ],
-  "description": {
-    "zh": "<p>论外下位C级参照角色。使用%n启动方式，在游戏加载阶段以后执行shellcode进行攻击。</p><h2>技术特点</h2><p>通过%n格式化字符串攻击修改RoundTimer实现强制胜利。</p>",
-    "en": "<p>Out-of-Topic Low-C reference character. Uses %n activation method to execute shellcode after game loading phase.</p><h2>Technical Features</h2><p>Uses %n format string attack to modify RoundTimer for forced victory.</p>",
-    "ja": "<p>論外下位C級参照キャラクター。%n起動方式で、ゲーム読み込み段階後にshellcodeを実行して攻撃。</p><h2>技術的特徴</h2><p>%nフォーマット文字列攻撃でRoundTimerを改変し強制勝利を実現。</p>"
-  }
+  "tags": {
+    "zh": [
+      "审核",
+      "论外下位",
+      "C级"
+    ],
+    "en": [
+      "Reference",
+      "Low",
+      "C-Class"
+    ],
+    "ja": [
+      "Reference",
+      "論外下位",
+      "C級"
+    ]
+  },
+  "image": "../img/duang.png",
+  "downloadUrl": "https://hellmugen.lanzoui.com/iALE5ee4bcf"
 }

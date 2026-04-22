@@ -1,0 +1,43 @@
+{
+  "title": {
+    "zh": "Oni-Miko-Z",
+    "en": "Oni-Miko-Z",
+    "ja": "Oni-Miko-Z"
+  },
+  "summary": {
+    "zh": "论外下位B参照角色",
+    "en": "Out-of-Topic LowB Reference Character",
+    "ja": "論外下位B参照キャラクター"
+  },
+  "ootqLevel": {
+    "zh": "论外下位B",
+    "en": "Out-of-Topic LowB",
+    "ja": "論外下位B"
+  },
+  "ootqTier": "low",
+  "origin": "MUGEN",
+  "author": "Lunatic氏",
+  "activation": "512超越启动",
+  "techniques": [
+    "直死"
+  ],
+  "tags": {
+    "zh": [
+      "审核",
+      "论外下位",
+      "B级"
+    ],
+    "en": [
+      "Reference",
+      "Low",
+      "B-Class"
+    ],
+    "ja": [
+      "Reference",
+      "論外下位",
+      "B級"
+    ]
+  },
+  "image": "../img/Oni-Miko-Z.png",
+  "downloadUrl": "https://1drv.ms/u/s!AkYM22Xc-hkcfDlqlnQYxA8mYJc?e=tyzV68"
+}
