@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>编辑 - 编辑角色</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="i18n.js" defer></script>
+</head>
+<body>
+  <header>
+    <div class="container header-inner">
+      <a href="" class="logo">
+        <span>🎮</span>
+        <span>MUGEN OOTQ Wiki</span>
+      </a>
+      <div class="header-controls">
+        <button id="themeToggle" class="btn" aria-label="Toggle theme">🌙</button>
+        <select id="langSelect" class="lang-select">
+          <option value="zh">中文</option>
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <nav class="container">
+    <div style="padding: 10px 0; border-bottom: 1px solid var(--border-color);">
+      <a href="" data-i18n="home">首页</a>
+      <a href="characters/" data-i18n="characters" style="margin-left: 20px;">角色</a>
+      <a href="glossary/" data-i18n="glossary" style="margin-left: 20px;">术语</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="page-header">
+      <h1 data-i18n="newTitle">新建角色</h1>
+    </div>
+
+    <div class="edit-form">
+      <div class="form-group">
+        <label>Slug (URL标识)</label>
+        <input type="text" id="slug" placeholder="例如: my-character" value="">
+        <small>只能是字母、数字、连字符</small>
+      </div>
+
+      <div class="form-group">
+        <label>标题</label>
+        <input type="text" id="title" placeholder="例如: My Character">
+      </div>
+
+      <div class="form-group">
+        <label>简介 (摘要)</label>
+        <textarea id="summary" placeholder="简短描述"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>OOTQ 等级</label>
+        <select id="ootqTier">
+          <option value="">-- 选择等级 --</option>
+          <option value="low">论外下位</option>
+          <option value="mid">论外中位</option>
+          <option value="high">论外上位</option>
+          <option value="top">论外最上位</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>等级细分</label>
+        <select id="ootqSublevel">
+          <option value="">-- 选择细分 --</option>
+          <option value="A">A级</option>
+          <option value="B">B级</option>
+          <option value="C">C级</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>作品来源</label>
+        <input type="text" id="origin" placeholder="例如: MUGEN">
+      </div>
+
+      <div class="form-group">
+        <label>作者</label>
+        <input type="text" id="author" placeholder="例如: 熄废人氏">
+      </div>
+
+      <div class="form-group">
+        <label>启动方式</label>
+        <input type="text" id="activation" placeholder="例如: StateDef溢出">
+      </div>
+
+      <div class="form-group">
+        <label>标签 (逗号分隔)</label>
+        <input type="text" id="tags" placeholder="例如: 论外下位, C级, 强制胜利">
+      </div>
+
+      <div class="form-group">
+        <label>下载链接 (选填)</label>
+        <input type="text" id="downloadUrl" placeholder="例如: https://example.com/character.zip">
+      </div>
+
+      <div class="form-group">
+        <label>图片链接 (选填，支持外部URL或相对路径如 assets/cover.png)</label>
+        <input type="text" id="image" placeholder="例如: https://example.com/image.png 或 assets/cover.png">
+      </div>
+
+      <div class="form-group">
+        <label>详细描述 (支持HTML)</label>
+        <textarea id="description" rows="8" placeholder="<p>详细描述...</p>"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button id="generateBtn" class="btn btn-primary">生成 JSON</button>
+      </div>
+
+      <div id="jsonPreview" class="json-preview" style="display:none;">
+        <h3>生成的 JSON</h3>
+        <pre><code id="jsonOutput"></code></pre>
+        <div class="form-actions">
+          <a id="githubBtn" href="#" target="_blank" class="btn btn-primary">
+            在 GitHub 上创建/编辑
+          </a>
+          <button id="copyBtn" class="btn">复制 JSON</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 MUGEN OOTQ Ranking Wiki</p>
+    </div>
+  </footer>
+
+  <script>
+const REPO = 'KYjoke/MUGEN-OOTQ-Ranking-Wiki';
+const BRANCH = 'main';
+const BASE_URL = 'https://github.com/' + REPO + '/new/' + BRANCH + '/content';
+
+let currentLang = localStorage.getItem('lang') || 'zh';
+
+const langData = {
+  title: {
+    zh: { label: '标题', placeholder: '例如: My Character' },
+    en: { label: 'Title', placeholder: 'e.g.: My Character' },
+    ja: { label: 'タイトル', placeholder: '例: マイキャラクター' }
+  }
+};
+
+function generateJSON() {
+  const slug = document.getElementById('slug').value.trim();
+  const title = document.getElementById('title').value.trim();
+  const summary = document.getElementById('summary').value.trim();
+  const ootqTier = document.getElementById('ootqTier').value;
+  const ootqSublevel = document.getElementById('ootqSublevel').value;
+  const origin = document.getElementById('origin').value.trim();
+  const author = document.getElementById('author').value.trim();
+  const activation = document.getElementById('activation').value.trim();
+  const tagsInput = document.getElementById('tags').value.trim();
+  const downloadUrl = document.getElementById('downloadUrl').value.trim();
+  const image = document.getElementById('image').value.trim();
+  const description = document.getElementById('description').value.trim();
+
+  if (!slug) { alert('请输入 Slug'); return; }
+  if (!title) { alert('请输入标题'); return; }
+
+  const ootqLevelMap = {
+    low: { A: '论外下位A', B: '论外下位B', C: '论外下位C', '': '论外下位' },
+    mid: { A: '论外中位A', B: '论外中位B', C: '论外中位C', '': '论外中位' },
+    high: { A: '论外上位A', B: '论外上位B', C: '论外上位C', '': '论外上位' },
+    top: { A: '论外最上位A', B: '论外最上位B', C: '论外最上位C', '': '论外最上位' }
+  };
+
+  const tierBadgeMap = {
+    low: { A: '论外下位A', B: '论外下位B', C: '论外下位C', '': '论外下位' },
+    mid: { A: '论外中位A', B: '论外中位B', C: '论外中位C', '': '论外中位' },
+    high: { A: '论外上位A', B: '论外上位B', C: '论外上位C', '': '论外上位' },
+    top: { A: '论外最上位A', B: '论外最上位B', C: '论外最上位C', '': '论外最上位' }
+  };
+
+  const tags = tagsInput ? tagsInput.split(',').map(t => t.trim()).filter(t => t) : [];
+
+  const ootqLevel = ootqTier ? tierBadgeMap[ootqTier][ootqSublevel] : '';
+
+  const meta = {
+    title: { zh: title, en: title, ja: title },
+    summary: { zh: summary, en: summary, ja: summary },
+    ootqLevel: ootqLevel ? { zh: ootqLevel, en: ootqLevel.replace(/论外/g, 'Out-of-Topic ').replace(/上位/g, 'High').replace(/中位/g, 'Mid').replace(/下位/g, 'Low'), ja: ootqLevel.replace(/论外/, '論外') } : null,
+    ootqTier: ootqTier || 'low',
+    origin: origin || 'MUGEN',
+    author: author,
+    tags: {
+      zh: tags,
+      en: tags.map(t => t),
+      ja: tags.map(t => t)
+    },
+    activation: activation,
+    downloadUrl: downloadUrl || null,
+    image: image || null,
+    description: {
+      zh: description || '',
+      en: description || '',
+      ja: description || ''
+    }
+  };
+
+  // Remove null values
+  Object.keys(meta).forEach(key => {
+    if (meta[key] === null) delete meta[key];
+  });
+
+  return meta;
+}
+
+function updatePreview() {
+  const json = generateJSON();
+  const jsonStr = JSON.stringify(json, null, 2);
+  document.getElementById('jsonOutput').textContent = jsonStr;
+  document.getElementById('jsonPreview').style.display = 'block';
+
+  const slug = document.getElementById('slug').value.trim();
+  const githubUrl = BASE_URL + '/characters/' + slug;
+  document.getElementById('githubBtn').href = githubUrl;
+}
+
+document.getElementById('generateBtn').addEventListener('click', updatePreview);
+
+document.getElementById('copyBtn').addEventListener('click', function() {
+  const json = document.getElementById('jsonOutput').textContent;
+  navigator.clipboard.writeText(json).then(() => {
+    this.textContent = '已复制!';
+    setTimeout(() => this.textContent = '复制 JSON', 2000);
+  });
+});
+
+// Auto-update slug from title
+document.getElementById('title').addEventListener('input', function() {
+  if (!document.getElementById('slug').value) {
+    document.getElementById('slug').value = this.value.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+  }
+});
+  </script>
+
+  <style>
+.edit-form {
+  max-width: 700px;
+  margin: 0 auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: var(--text-primary);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 1em;
+  font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--link-color);
+}
+
+.form-group small {
+  color: var(--text-secondary);
+  font-size: 0.85em;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.btn-primary {
+  background: var(--link-color);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1em;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+  text-decoration: none;
+}
+
+.json-preview {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color);
+}
+
+.json-preview h3 {
+  margin-bottom: 12px;
+  font-size: 1.1em;
+}
+
+.json-preview pre {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 16px;
+  overflow-x: auto;
+  max-height: 400px;
+}
+
+.json-preview code {
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 0.9em;
+  white-space: pre;
+}
+  </style>
+</body>
+</html>
