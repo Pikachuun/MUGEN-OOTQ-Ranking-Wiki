@@ -3,9 +3,9 @@
   <p class="lead" data-i18n="<%= leadKey %>"><%= leadZh %></p>
 </div>
 
-<div class="list-container" id="listContainer">
+<div class="list-container" id="listContainer" style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;">
   <% items.forEach((item, idx) => { %>
-    <a class="card <%= itemType %>-card" href="<%= item.slug %>/">
+    <a class="card <%= itemType %>-card" href="<%= item.slug %>/" style="display:flex;flex-direction:column;padding:16px;">
       <% if (itemType === 'char' && item.meta.image) { %>
         <img src="../img/<%= item.meta.image %>" alt="<%= getField(item.meta.title, 'zh') %>" style="width:100%;height:100px;object-fit:cover;border-radius:4px;margin-bottom:10px;">
       <% } %>
@@ -38,17 +38,10 @@
 </div>
 
 <style>
-.list-container {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin: 20px 0;
-}
-
 .list-container .card {
   display: flex;
   flex-direction: column;
-  padding: 16px 20px;
+  padding: 16px;
 }
 
 .card-header {
