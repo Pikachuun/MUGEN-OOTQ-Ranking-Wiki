@@ -86,8 +86,21 @@ function applyLang(lang) {
   document.querySelectorAll("[data-i18n]").forEach(el => {
     if (el.tagName === 'INPUT') return;
     const key = el.getAttribute("data-i18n");
-    if (t[key] && !['title', 'summary', 'description', 'ootqLevel'].includes(key)) {
-      el.textContent = t[key];
+
+    if (key.startsWith('c:') || key.startsWith('t:')) {
+      const [type, idx, field] = key.split(':');
+      const meta = type === 'c' ? window.__chars[parseInt(idx)] : window.__terms[parseInt(idx)];
+      if (meta && meta[field]) {
+        if (field === 'tags') {
+          const tagsEl = el;
+          const tags = meta.tags.map(tag => getField(tag, lang));
+          tagsEl.innerHTML = tags.slice(0, 3).map(t => `<span class="tag">${t}</span>`).join('');
+        } else {
+          el.textContent = getField(meta[field], lang);
+        }
+      }
+    } else if (!['title', 'summary', 'description', 'ootqLevel'].includes(key)) {
+      el.textContent = t[key] || key;
     }
   });
 
@@ -102,7 +115,7 @@ function applyLang(lang) {
     for (const field of fields) {
       if (meta[field]) {
         const els = document.querySelectorAll(`[data-i18n="${field}"]`);
-        const val = window.getField(meta[field], lang);
+        const val = getField(meta[field], lang);
         els.forEach(el => {
           if (field === 'description') {
             el.innerHTML = val;
@@ -116,14 +129,10 @@ function applyLang(lang) {
     if (meta.tags) {
       const tagsEl = document.querySelector('.infobox-table td .tags');
       if (tagsEl) {
-        const tags = meta.tags.map(t => window.getField(t, lang));
+        const tags = meta.tags.map(t => getField(t, lang));
         tagsEl.innerHTML = tags.map(t => `<span class="tag">${t}</span>`).join('');
       }
     }
-  }
-
-  if (typeof updateCards === 'function') {
-    updateCards(lang);
   }
 
   updateLangSelect(lang);
@@ -150,9 +159,7 @@ function init() {
     langSelect.addEventListener("change", e => applyLang(e.target.value));
   }
 
-  if (window.__meta || document.querySelector('.char-card, .glossary-card')) {
-    applyLang(getStoredLang());
-  }
+  applyLang(getStoredLang());
 }
 
 if (document.readyState === 'loading') {

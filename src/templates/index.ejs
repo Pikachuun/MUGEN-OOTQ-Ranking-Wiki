@@ -14,15 +14,15 @@
     <% characters.forEach((char, idx) => { %>
       <a class="card char-card" href="<%= r('characters/') %><%= char.slug %>/">
         <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px;">
-          <h3 class="char-title" data-field="title"><%= getField(char.meta.title, 'zh') %></h3>
+          <h3 data-i18n="<%= 'c:' + idx + ':title' %>"><%= getField(char.meta.title, 'zh') %></h3>
           <% if (char.meta.ootqLevel) { %>
-            <span class="ootq-badge ootq-<%= char.meta.ootqTier || 'low' %> char-ootq" data-field="ootqLevel"><%= getField(char.meta.ootqLevel, 'zh') %></span>
+            <span class="ootq-badge ootq-<%= char.meta.ootqTier || 'low' %>" data-i18n="<%= 'c:' + idx + ':ootqLevel' %>"><%= getField(char.meta.ootqLevel, 'zh') %></span>
           <% } %>
         </div>
-        <p class="char-summary" data-field="summary"><%= getField(char.meta.summary, 'zh') %></p>
+        <p data-i18n="<%= 'c:' + idx + ':summary' %>"><%= getField(char.meta.summary, 'zh') %></p>
         <% const tagsArr = Array.isArray(char.meta.tags) ? char.meta.tags : (char.meta.tags.zh || []); %>
         <% if (tagsArr.length) { %>
-          <div class="tags char-tags" data-field="tags">
+          <div class="tags" data-i18n="<%= 'c:' + idx + ':tags' %>" data-tags='<%= JSON.stringify(char.meta.tags) %>'>
             <% tagsArr.slice(0, 3).forEach(tag => { %>
               <span class="tag"><%= getField(tag, 'zh') %></span>
             <% }); %>
@@ -44,11 +44,11 @@
     <a href="<%= r('glossary/') %>" style="font-size:0.9em;">查看全部 →</a>
   </div>
   <div class="card-grid" id="glossaryGrid">
-    <% terms.forEach(term => { %>
+    <% terms.forEach((term, idx) => { %>
       <a class="card glossary-card" href="<%= r('glossary/') %><%= term.slug %>/">
-        <h3 class="term-title"><%= getField(term.meta.title, 'zh') %></h3>
+        <h3 data-i18n="<%= 't:' + idx + ':title' %>"><%= getField(term.meta.title, 'zh') %></h3>
         <% if (term.meta.summary) { %>
-          <p class="term-summary"><%= getField(term.meta.summary, 'zh') %></p>
+          <p data-i18n="<%= 't:' + idx + ':summary' %>"><%= getField(term.meta.summary, 'zh') %></p>
         <% } %>
       </a>
     <% }); %>
@@ -63,45 +63,4 @@
 <script>
 window.__chars = <%- JSON.stringify(characters.map(c => c.meta)) %>;
 window.__terms = <%- JSON.stringify(terms.map(t => t.meta)) %>;
-
-function updateCards(lang) {
-  document.querySelectorAll('.char-card').forEach((card, i) => {
-    const meta = window.__chars[i];
-    if (!meta) return;
-    
-    const titleEl = card.querySelector('.char-title');
-    if (titleEl && meta.title) titleEl.textContent = getField(meta.title, lang);
-    
-    const ootqEl = card.querySelector('.char-ootq');
-    if (ootqEl && meta.ootqLevel) ootqEl.textContent = getField(meta.ootqLevel, lang);
-    
-    const summaryEl = card.querySelector('.char-summary');
-    if (summaryEl && meta.summary) summaryEl.textContent = getField(meta.summary, lang);
-    
-    const tagsEl = card.querySelector('.char-tags');
-    if (tagsEl && meta.tags) {
-      const tags = meta.tags.map(t => getField(t, lang));
-      tagsEl.innerHTML = tags.slice(0, 3).map(t => `<span class="tag">${t}</span>`).join('');
-    }
-  });
-  
-  document.querySelectorAll('.glossary-card').forEach((card, i) => {
-    const meta = window.__terms[i];
-    if (!meta) return;
-    
-    const titleEl = card.querySelector('.term-title');
-    if (titleEl && meta.title) titleEl.textContent = getField(meta.title, lang);
-    
-    const summaryEl = card.querySelector('.term-summary');
-    if (summaryEl && meta.summary) summaryEl.textContent = getField(meta.summary, lang);
-  });
-}
-
-if (typeof applyLang === 'function') {
-  applyLang(getStoredLang());
-} else {
-  document.addEventListener('DOMContentLoaded', function() {
-    applyLang(getStoredLang());
-  });
-}
 </script>
