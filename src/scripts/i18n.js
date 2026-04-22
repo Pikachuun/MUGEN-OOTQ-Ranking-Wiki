@@ -56,13 +56,13 @@ function getStoredLang() {
   return localStorage.getItem("lang") || "zh";
 }
 
-function getField(val, lang) {
+window.getField = function(val, lang) {
   if (typeof val === 'string') return val;
   if (typeof val === 'object' && val !== null) {
     return val[lang] || val.zh || '';
   }
   return '';
-}
+};
 
 function applyTheme(theme) {
   document.documentElement.setAttribute("data-theme", theme);
@@ -84,8 +84,11 @@ function applyLang(lang) {
   const t = translations[lang] || translations.zh;
 
   document.querySelectorAll("[data-i18n]").forEach(el => {
+    if (el.tagName === 'INPUT') return;
     const key = el.getAttribute("data-i18n");
-    if (t[key]) el.textContent = t[key];
+    if (t[key] && !['title', 'summary', 'description', 'ootqLevel'].includes(key)) {
+      el.textContent = t[key];
+    }
   });
 
   document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
@@ -94,28 +97,32 @@ function applyLang(lang) {
   });
 
   if (window.__meta) {
-    applyContentLang(window.__meta, lang);
+    const meta = window.__meta;
+    const fields = ['title', 'summary', 'description', 'ootqLevel'];
+    for (const field of fields) {
+      if (meta[field]) {
+        const els = document.querySelectorAll(`[data-i18n="${field}"]`);
+        const val = window.getField(meta[field], lang);
+        els.forEach(el => {
+          if (field === 'description') {
+            el.innerHTML = val;
+          } else {
+            el.textContent = val;
+          }
+        });
+      }
+    }
+
+    if (meta.tags) {
+      const tagsEl = document.querySelector('.infobox-table td .tags');
+      if (tagsEl) {
+        const tags = meta.tags.map(t => window.getField(t, lang));
+        tagsEl.innerHTML = tags.map(t => `<span class="tag">${t}</span>`).join('');
+      }
+    }
   }
 
   updateLangSelect(lang);
-}
-
-function applyContentLang(meta, lang) {
-  const fields = ['title', 'summary', 'description', 'ootqLevel'];
-  for (const field of fields) {
-    if (meta[field]) {
-      const el = document.querySelector(`[data-i18n="${field}"]`);
-      if (el) el.innerHTML = getField(meta[field], lang);
-    }
-  }
-
-  if (meta.tags) {
-    const tagsEl = document.querySelector('.infobox-table td .tags');
-    if (tagsEl && Array.isArray(meta.tags)) {
-      const tags = meta.tags.map(t => getField(t, lang));
-      tagsEl.innerHTML = tags.map(t => `<span class="tag">${t}</span>`).join('');
-    }
-  }
 }
 
 function updateLangSelect(lang) {
