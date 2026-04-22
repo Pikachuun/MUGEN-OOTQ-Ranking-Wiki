@@ -31,12 +31,12 @@ const tierNamesEn = { top: 'Top', high: 'High', mid: 'Mid', low: 'Low' };
 <section class="section">
   <div class="section-header">
     <h2 data-i18n="characters">角色</h2>
-    <a href="<%= r('characters/') %>" style="font-size:0.9em;">查看全部 →</a>
+    <a href="<%= r('characters/') %>" style="font-size:0.9em;" data-i18n="viewAll">查看全部 →</a>
   </div>
 
   <% Object.keys(groups).forEach(tier => { %>
     <div class="home-tier-section">
-      <h3 class="home-tier-header"><%= tierNames[tier] || tier %></h3>
+      <h3 class="home-tier-header" data-i18n="tier<%= tier.charAt(0).toUpperCase() + tier.slice(1) %>"><%= tierNames[tier] || tier %></h3>
       <div class="card-grid">
         <% groups[tier].forEach(char => { %>
           <a class="card char-card" href="<%= r('characters/') %><%= char.slug %>/">
@@ -57,7 +57,7 @@ const tierNamesEn = { top: 'Top', high: 'High', mid: 'Mid', low: 'Low' };
 <section class="section">
   <div class="section-header">
     <h2 data-i18n="glossary">术语</h2>
-    <a href="<%= r('glossary/') %>" style="font-size:0.9em;">查看全部 →</a>
+    <a href="<%= r('glossary/') %>" style="font-size:0.9em;" data-i18n="viewAll">查看全部 →</a>
   </div>
   <div class="card-grid" id="glossaryGrid">
     <% terms.forEach((term, idx) => { %>

@@ -1,6 +1,6 @@
 <div class="page-header">
   <h1 data-i18n="characters">角色</h1>
-  <p class="lead">所有已收录的角色列表</p>
+  <p class="lead" data-i18n="leadText">所有已收录的角色列表</p>
 </div>
 
 <%
@@ -18,7 +18,6 @@ const sorted = [...characters].sort((a, b) => {
 const groups = {};
 sorted.forEach(char => {
   const tier = char.meta.ootqTier || 'low';
-  const level = char.meta.ootqLevel?.zh || tier;
   if (!groups[tier]) groups[tier] = [];
   groups[tier].push(char);
 });
@@ -26,12 +25,12 @@ sorted.forEach(char => {
 const tierNames = { top: '论外最上位', high: '论外上位', mid: '论外中位', low: '论外下位' };
 %>
 
-<% Object.keys(groups).forEach(tier => { %>
-  <div class="tier-section">
-    <h2 class="tier-header"><%= tierNames[tier] || tier %></h2>
+  <% Object.keys(groups).forEach(tier => { %>
+    <div class="tier-section">
+      <h2 class="tier-header" data-i18n="tier<%= tier.charAt(0).toUpperCase() + tier.slice(1) %>"><%= tierNames[tier] || tier %></h2>
     <div class="card-grid">
       <% groups[tier].forEach(char => { %>
-        <a class="card char-card" href="<%= r('') %><%= char.slug %>/">
+        <a class="card char-card" href="<%= char.slug %>/">
           <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px;">
             <h3 class="char-title" data-lang='<%= JSON.stringify(char.meta.title).replace(/'/g, "\\'") %>'><%= getField(char.meta.title, 'zh') %></h3>
             <% if (char.meta.ootqLevel) { %>

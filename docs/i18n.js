@@ -12,7 +12,13 @@ const translations = {
     activation: "启动方式",
     summary: "摘要",
     description: "详情",
-    title: "标题"
+    title: "标题",
+    viewAll: "查看全部 →",
+    tierTop: "论外最上位",
+    tierHigh: "论外上位",
+    tierMid: "论外中位",
+    tierLow: "论外下位",
+    leadText: "所有已收录的角色列表"
   },
   en: {
     home: "Home",
@@ -27,7 +33,13 @@ const translations = {
     activation: "Activation",
     summary: "Summary",
     description: "Details",
-    title: "Title"
+    title: "Title",
+    viewAll: "View all →",
+    tierTop: "Top",
+    tierHigh: "High",
+    tierMid: "Mid",
+    tierLow: "Low",
+    leadText: "All indexed characters"
   },
   ja: {
     home: "ホーム",
@@ -42,7 +54,13 @@ const translations = {
     activation: "起動方式",
     summary: "要約",
     description: "詳細",
-    title: "タイトル"
+    title: "タイトル",
+    viewAll: "すべて表示 →",
+    tierTop: "論外最上位",
+    tierHigh: "論外上位",
+    tierMid: "論外中位",
+    tierLow: "論外下位",
+    leadText: "すべての登録済みキャラクター"
   }
 };
 

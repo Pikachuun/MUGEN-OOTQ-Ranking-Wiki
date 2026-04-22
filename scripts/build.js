@@ -69,8 +69,8 @@ async function build() {
     }
   }
 
-  const charListContent = ejs.render(charListTemplate, { characters, r: (p) => rel(p, 0), getField });
-  const charListHtml = ejs.render(layoutTemplate, { title: 'Characters', content: charListContent, r: (p) => rel(p, 0), lang: 'zh' });
+  const charListContent = ejs.render(charListTemplate, { characters, r: (p) => rel(p, 1), getField });
+  const charListHtml = ejs.render(layoutTemplate, { title: 'Characters', content: charListContent, r: (p) => rel(p, 1), lang: 'zh' });
   await fs.writeFile(path.join(DIST, 'characters', 'index.html'), charListHtml);
 
   const terms = [];
