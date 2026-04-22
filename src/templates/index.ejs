@@ -99,5 +99,9 @@ function updateCards(lang) {
 
 if (typeof applyLang === 'function') {
   applyLang(getStoredLang());
+} else {
+  document.addEventListener('DOMContentLoaded', function() {
+    applyLang(getStoredLang());
+  });
 }
 </script>

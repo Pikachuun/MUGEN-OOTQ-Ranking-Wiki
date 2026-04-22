@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MUGEN OOTQ Ranking Wiki</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="i18n.js" defer></script>
 </head>
 <body>
   <header>
@@ -276,6 +277,10 @@ function updateCards(lang) {
 
 if (typeof applyLang === 'function') {
   applyLang(getStoredLang());
+} else {
+  document.addEventListener('DOMContentLoaded', function() {
+    applyLang(getStoredLang());
+  });
 }
 </script>
 
@@ -286,7 +291,5 @@ if (typeof applyLang === 'function') {
       <p>&copy; 2026 MUGEN OOTQ Ranking Wiki</p>
     </div>
   </footer>
-
-  <script src="i18n.js"></script>
 </body>
 </html>
