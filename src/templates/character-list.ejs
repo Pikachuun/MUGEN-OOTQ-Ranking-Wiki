@@ -143,6 +143,10 @@
 
   function extractFirstImage(body) {
     const text = body || '';
+
+    const htmlImage = text.match(/<img\s[^>]*src=["'](https?:\/\/[^"']+)["']/i);
+    if (htmlImage) return htmlImage[1];
+
     const markdownImage = text.match(/!\[[^\]]*\]\((https?:\/\/[^)\s]+)\)/i);
     if (markdownImage) return markdownImage[1];
 
