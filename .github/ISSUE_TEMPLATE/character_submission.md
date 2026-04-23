@@ -5,32 +5,26 @@ title: "[character] "
 labels: character
 ---
 
-<!-- 请在下方 ```json 代码块中填写角色信息，字段说明见 https://github.com/mugen-community/MUGEN-OOTQ-Ranking-Wiki#角色-issue-数据格式 -->
-<!-- summary / description 支持 HTML 和 GitHub Flavored Markdown -->
-<!-- 图片引用说明：可在正文上传图片，然后在 JSON 中用 <!-- image:N --> 引用（N=图片序号，从1开始） -->
-<!-- 示例：上传了3张图片，第一张作为预览图，第2、3张作为介绍图：
-     "images": ["<!-- image:1 -->"],
-     "detailImages": ["<!-- image:2 -->", "<!-- image:3 -->"]
--->
+## 基本信息
 
-```json
-{
-  "slug": "",
-  "title": { "zh": "", "en": "", "ja": "" },
-  "summary": { "zh": "", "en": "", "ja": "" },
-  "ootqTier": "low",
-  "ootqLevel": { "zh": "", "en": "", "ja": "" },
-  "origin": "MUGEN",
-  "author": "",
-  "activation": [],
-  "techniques": [],
-  "tags": { "zh": [], "en": [], "ja": [] },
-  "images": [],
-  "detailImages": [],
-  "downloadUrl": "",
-  "description": { "zh": "", "en": "", "ja": "" }
-}
-```
+| 字段 | 值 |
+|------|-----|
+| **作者** | |
+| **来源** | |
+| **启动方式** | |
+| **技术** | |
+| **分级** | |
+| **标签** | |
+| **下载链接** | |
 
-<!-- JSON 代码块之外的内容也会作为描述回退显示 -->
-<!-- 在此处拖拽上传图片，然后在 JSON 中用 <!-- image:N --> 引用 -->
+## 角色介绍
+
+在此处编写角色描述，支持 **GitHub Flavored Markdown**。
+
+图片可直接拖拽上传到本 Issue，然后在正文中引用：
+
+![示例图片](https://...)
+
+## 备注
+
+其他补充说明。

@@ -49,7 +49,8 @@ async function build() {
   const glossaryTemplate = await fs.readFile(path.join(SRC, 'templates', 'glossary.ejs'), 'utf8');
   const indexTemplate = await fs.readFile(path.join(SRC, 'templates', 'index.ejs'), 'utf8');
   const listTemplate = await fs.readFile(path.join(SRC, 'templates', 'list.ejs'), 'utf8');
-  const editTemplate = await fs.readFile(path.join(SRC, 'templates', 'edit.ejs'), 'utf8');
+
+
 
   await fs.copy(path.join(SRC, 'styles', 'main.css'), path.join(DIST, 'styles.css'));
   await fs.copy(path.join(SRC, 'styles', 'github-markdown.css'), path.join(DIST, 'github-markdown.css'));
@@ -59,7 +60,8 @@ async function build() {
   await fs.ensureDir(path.join(DIST, 'characters'));
   await fs.ensureDir(path.join(DIST, 'glossary'));
 
-  const charListContent = ejs.render(charListTemplate, { r: (p) => rel(p, 1) });
+  const tagSystem = await fs.readJson(path.join(ROOT, 'Tag-System.json'));
+  const charListContent = ejs.render(charListTemplate, { r: (p) => rel(p, 1), tagSystem });
   const charListHtml = ejs.render(layoutTemplate, {
     title: 'Characters',
     content: charListContent,
@@ -109,8 +111,8 @@ async function build() {
   });
   await fs.writeFile(path.join(DIST, 'index.html'), indexHtml);
 
-  const editHtml = ejs.render(editTemplate, { title: 'Issue CMS Draft Generator' });
-  await fs.writeFile(path.join(DIST, 'edit.html'), editHtml);
+
+
 
   console.log('Build complete! Output in docs/');
 }

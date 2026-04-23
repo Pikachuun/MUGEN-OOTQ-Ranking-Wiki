@@ -35,110 +35,69 @@
 
   <main class="container">
     <div class="page-header">
-      <h1>Issue CMS 草稿生成器</h1>
-      <p class="lead">填写角色信息后，会生成可直接粘贴到 GitHub Issue 的 JSON 代码块。</p>
+      <h1>角色 Issue 创建工具</h1>
+      <p class="lead">填写信息后生成 Issue 草稿，提交后自动显示在角色列表和详情页。</p>
     </div>
 
     <div class="format-hint">
-      <h3>数据格式说明</h3>
+      <h3>说明</h3>
       <ul>
-        <li>Issue 正文须包含一个 <code>```json</code> 代码块，内含角色元数据 JSON。</li>
-        <li><strong>summary</strong> / <strong>description</strong> 等文本字段支持 <strong>HTML</strong> 和 <strong>GitHub Flavored Markdown</strong>，页面会自动渲染。</li>
-        <li>多语言字段使用 <code>{ "zh": "...", "en": "...", "ja": "..." }</code> 格式。</li>
-        <li>必填标签：<code>character</code>；辅助标签：<code>slug:&lt;slug&gt;</code>、<code>tier:low|mid|high|top</code>、<code>level:&lt;text&gt;</code>。</li>
-        <li><strong>images</strong>：预览图/头像，支持 URL 或 <code>&lt;!-- image:N --&gt;</code> 引用 Issue 正文中上传的图片。</li>
-        <li><strong>detailImages</strong>：介绍图，支持 URL 或 <code>&lt;!-- image:N --&gt;</code> 引用 Issue 正文中上传的图片。</li>
-        <li>图片索引从 1 开始，按 Issue 正文中图片出现顺序计数。</li>
-        <li>JSON 代码块之外的 Issue 正文内容会作为描述回退显示。</li>
+        <li><strong>Issue 标题</strong> 作为角色显示名称</li>
+        <li><strong>Labels</strong> 用于设置分级、URL 标识和标签，可用前缀：<code>tier:</code>、<code>level:</code>、<code>slug:</code></li>
+        <li>其他 label 自动作为角色标签</li>
+        <li><strong>正文</strong> 使用 GitHub Flavored Markdown 编写，图片拖拽上传后会自动识别</li>
+        <li>已有 Issue 中的 <code>```json</code> 元数据块仍然兼容（系统会自动忽略）</li>
       </ul>
     </div>
 
     <div class="edit-form">
       <div class="form-group">
-        <label>Slug (建议与角色页面 URL 标识一致)</label>
-        <input type="text" id="slug" placeholder="例如: my-character">
-      </div>
-
-      <div class="form-group">
-        <label>标题</label>
+        <label>角色名称 (Issue 标题)</label>
         <input type="text" id="title" placeholder="例如: My Character">
       </div>
 
       <div class="form-group">
-        <label>摘要</label>
-        <textarea id="summary" placeholder="简短摘要"></textarea>
+        <label>Slug (URL 标识，留空自动生成)</label>
+        <input type="text" id="slug" placeholder="例如: my-character">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Tier (分级)</label>
+          <select id="ootqTier">
+            <option value="low">low (论外下位)</option>
+            <option value="mid">mid (论外中位)</option>
+            <option value="high">high (论外上位)</option>
+            <option value="top">top (论外最上位)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Level (级别名，可选，如 S、A+)</label>
+          <input type="text" id="ootqLevel" placeholder="例如: S">
+        </div>
       </div>
 
       <div class="form-group">
-        <label>OOTQ Tier</label>
-        <select id="ootqTier">
-          <option value="low">low</option>
-          <option value="mid">mid</option>
-          <option value="high">high</option>
-          <option value="top">top</option>
-        </select>
+        <label>标签 (逗号分隔，除 tier/level/slug 外的 label 自动作为标签)</label>
+        <input type="text" id="tags" placeholder="例如: 参考, 防御型, 改造">
       </div>
 
       <div class="form-group">
-        <label>OOTQ Level (展示文本)</label>
-        <input type="text" id="ootqLevel" placeholder="例如: 论外下位C / Out-of-Topic Low C">
-      </div>
-
-      <div class="form-group">
-        <label>作者</label>
-        <input type="text" id="author" placeholder="例如: Foo, Bar">
-      </div>
-
-      <div class="form-group">
-        <label>来源</label>
-        <input type="text" id="origin" placeholder="例如: MUGEN">
-      </div>
-
-      <div class="form-group">
-        <label>启动方式 (逗号分隔)</label>
-        <input type="text" id="activation" placeholder="例如: %n启动, StateDef溢出">
-      </div>
-
-      <div class="form-group">
-        <label>技术 (逗号分隔)</label>
-        <input type="text" id="techniques" placeholder="例如: LIFE改写, Noko解除">
-      </div>
-
-      <div class="form-group">
-        <label>标签 (逗号分隔)</label>
-        <input type="text" id="tags" placeholder="例如: 参考, 论外下位, C级">
-      </div>
-
-      <div class="form-group">
-        <label>预览图 / 头像 (逗号分隔，支持 URL 或 <!-- image:N --> 引用)</label>
-        <input type="text" id="images" placeholder="例如: <!-- image:1 --> 或 https://.../cover.png">
-      </div>
-
-      <div class="form-group">
-        <label>介绍图 (逗号分隔，用于详情页，支持 URL 或 <!-- image:N --> 引用)</label>
-        <input type="text" id="detailImages" placeholder="例如: <!-- image:2 -->, <!-- image:3 -->">
-      </div>
-
-      <div class="form-group">
-        <label>下载链接</label>
-        <input type="text" id="downloadUrl" placeholder="例如: https://example.com/character.zip">
-      </div>
-
-      <div class="form-group">
-        <label>详细描述 (支持 HTML 或 GitHub Markdown)</label>
-        <textarea id="description" rows="8" placeholder="角色详细描述..."></textarea>
+        <label>正文 (Markdown)</label>
+        <textarea id="body" rows="12" placeholder="使用 Markdown 编写角色介绍，图片可拖拽上传后在正文中引用&#10;&#10;## 基本信息&#10;&#10;- **作者**：&#10;- **来源**：&#10;- **启动方式**：&#10;- **下载链接**：&#10;&#10;## 角色介绍&#10;&#10;在此处编写详细描述..."></textarea>
       </div>
 
       <div class="form-actions">
         <button id="generateBtn" class="btn btn-primary" type="button">生成 Issue 草稿</button>
       </div>
 
-      <div id="jsonPreview" class="json-preview" style="display:none;">
-        <h3>复制以下内容到 Issue 正文</h3>
-        <pre><code id="jsonOutput"></code></pre>
+      <div id="preview" class="json-preview" style="display:none;">
+        <h3>预览</h3>
+        <div class="preview-labels" id="labelPreview"></div>
+        <pre><code id="bodyPreview"></code></pre>
         <div class="form-actions">
           <a id="issueBtn" href="#" target="_blank" rel="noopener" class="btn btn-primary">打开 GitHub 新建 Issue</a>
-          <button id="copyBtn" class="btn" type="button">复制草稿</button>
         </div>
       </div>
     </div>
@@ -154,95 +113,33 @@
 (function () {
   const issueBase = 'https://github.com/mugen-community/MUGEN-OOTQ-Ranking-Wiki/issues/new?template=character_submission.md';
 
-  function splitList(id) {
-    return document.getElementById(id).value
-      .split(',')
-      .map((item) => item.trim())
-      .filter(Boolean);
-  }
-
-  function buildMeta() {
-    const slug = document.getElementById('slug').value.trim();
+  document.getElementById('generateBtn').addEventListener('click', function () {
     const title = document.getElementById('title').value.trim();
-    if (!title) {
-      alert('请先填写标题');
-      return null;
+    if (!title) { alert('请填写角色名称'); return; }
+
+    const slug = document.getElementById('slug').value.trim();
+    const tier = document.getElementById('ootqTier').value;
+    const level = document.getElementById('ootqLevel').value.trim();
+    const rawTags = document.getElementById('tags').value.trim();
+    const body = document.getElementById('body').value.trim() || '暂无内容';
+
+    const labels = ['character'];
+    if (slug) labels.push('slug:' + slug);
+    labels.push('tier:' + tier);
+    if (level) labels.push('level:' + level);
+    if (rawTags) {
+      rawTags.split(',').map(t => t.trim()).filter(Boolean).forEach(t => labels.push(t));
     }
 
-    const summary = document.getElementById('summary').value.trim();
-    const ootqTier = document.getElementById('ootqTier').value;
-    const ootqLevel = document.getElementById('ootqLevel').value.trim();
-    const author = document.getElementById('author').value.trim();
-    const origin = document.getElementById('origin').value.trim();
-    const activation = splitList('activation');
-    const techniques = splitList('techniques');
-    const tags = splitList('tags');
-    const images = splitList('images');
-    const detailImages = splitList('detailImages');
-    const downloadUrl = document.getElementById('downloadUrl').value.trim();
-    const description = document.getElementById('description').value.trim();
-
-    const meta = {
-      slug,
-      title: { zh: title, en: title, ja: title },
-      summary: { zh: summary, en: summary, ja: summary },
-      ootqTier,
-      ootqLevel: ootqLevel ? { zh: ootqLevel, en: ootqLevel, ja: ootqLevel } : undefined,
-      origin: origin || undefined,
-      author: author || undefined,
-      activation: activation.length ? activation : undefined,
-      techniques: techniques.length ? techniques : undefined,
-      tags: tags.length ? { zh: tags, en: tags, ja: tags } : undefined,
-      images: images.length ? images : undefined,
-      detailImages: detailImages.length ? detailImages : undefined,
-      downloadUrl: downloadUrl || undefined,
-      description: description ? { zh: description, en: description, ja: description } : undefined
-    };
-
-    Object.keys(meta).forEach((key) => {
-      if (meta[key] === undefined || meta[key] === '') delete meta[key];
-    });
-
-    return meta;
-  }
-
-  function renderDraft() {
-    const meta = buildMeta();
-    if (!meta) return;
-
-    const title = typeof meta.title === 'object' ? (meta.title.zh || 'Untitled') : (meta.title || 'Untitled');
-    const body = [
-      '```json',
-      JSON.stringify(meta, null, 2),
-      '```'
-    ].join('\n');
-
-    document.getElementById('jsonOutput').textContent = body;
-    document.getElementById('jsonPreview').style.display = 'block';
+    document.getElementById('labelPreview').textContent = 'Labels: ' + labels.join(', ');
+    document.getElementById('bodyPreview').textContent = body;
+    document.getElementById('preview').style.display = 'block';
 
     const url = new URL(issueBase);
     url.searchParams.set('title', '[character] ' + title);
     url.searchParams.set('body', body);
-
-    const labels = [];
-    if (meta.slug) labels.push('slug:' + meta.slug);
-    labels.push('tier:' + (meta.ootqTier || 'low'));
     url.searchParams.set('labels', labels.join(','));
-
     document.getElementById('issueBtn').href = url.toString();
-  }
-
-  document.getElementById('generateBtn').addEventListener('click', renderDraft);
-
-  document.getElementById('copyBtn').addEventListener('click', function () {
-    const text = document.getElementById('jsonOutput').textContent;
-    navigator.clipboard.writeText(text).then(() => {
-      const old = this.textContent;
-      this.textContent = '已复制';
-      setTimeout(() => {
-        this.textContent = old;
-      }, 1200);
-    });
   });
 
   document.getElementById('title').addEventListener('input', function () {
@@ -272,6 +169,15 @@
   margin-bottom: 20px;
 }
 
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
 .form-group label {
   display: block;
   font-weight: 500;
@@ -290,6 +196,7 @@
   color: var(--text-primary);
   font-size: 1em;
   font-family: inherit;
+  box-sizing: border-box;
 }
 
 .form-group input:focus,
@@ -347,12 +254,24 @@
   padding: 16px;
   overflow-x: auto;
   max-height: 420px;
+  white-space: pre-wrap;
 }
 
 .json-preview code {
   font-family: Consolas, Monaco, monospace;
   font-size: 0.9em;
   white-space: pre;
+}
+
+.preview-labels {
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.92em;
+  color: var(--text-secondary);
+  word-break: break-all;
 }
 
 .format-hint {

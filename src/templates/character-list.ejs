@@ -1,11 +1,11 @@
 <div class="page-header">
-  <h1>角色数据库 (Issue CMS)</h1>
+  <h1 data-i18n="characters">角色数据库</h1>
   <p class="lead">列表、预览、详情统一在此页面。数据实时来自 GitHub Issues。</p>
 </div>
 
 <section class="issue-cms-controls">
   <div class="search-box">
-    <input id="searchInput" type="search" placeholder="按角色名、标签、作者搜索...">
+    <input id="searchInput" type="search" placeholder="按角色名、标签搜索...">
   </div>
   <div class="filter-row">
     <label for="tierFilter">分级</label>
@@ -26,7 +26,7 @@
 
 <section id="listView" class="section" style="display:none;">
   <div class="section-header">
-    <h2>角色列表</h2>
+    <h2 data-i18n="characterList">角色列表</h2>
     <span id="resultCount" class="muted"></span>
   </div>
   <div id="cardGrid" class="card-grid"></div>
@@ -36,19 +36,26 @@
 
 <script>
 (() => {
+  const TAG_SYSTEM = <%- JSON.stringify(tagSystem) %>;
+
   const CONFIG = {
     owner: 'mugen-community',
     repo: 'MUGEN-OOTQ-Ranking-Wiki',
-    branch: 'main',
     characterLabel: 'character',
     perPage: 100,
     maxPages: 5
   };
 
+  const tierOrder = { top: 0, high: 1, mid: 2, low: 3, unknown: 4 };
+  const tierMap = { Lower_Out: 'low', Mid_Out: 'mid', Upper_Out: 'high' };
+
   const state = {
-    all: [],
+    all: null,
     filtered: [],
-    loading: false
+    tagIndex: null,
+    tierKeys: null,
+    loading: false,
+    lang: 'zh'
   };
 
   const refs = {
@@ -63,43 +70,21 @@
     reload: document.getElementById('reloadBtn')
   };
 
-  const tierOrder = { top: 0, high: 1, mid: 2, low: 3, unknown: 4 };
+  function getLang() {
+    return localStorage.getItem('lang') || 'zh';
+  }
+
+  function setLang(v) {
+    state.lang = v;
+    localStorage.setItem('lang', v);
+  }
+
+  state.lang = getLang();
 
   function escapeHtml(text) {
     return String(text || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-  }
-
-  function pickLocalized(value) {
-    if (typeof value === 'string') return value;
-    if (Array.isArray(value)) return value.join(' / ');
-    if (!value || typeof value !== 'object') return '';
-    const lang = localStorage.getItem('lang') || 'zh';
-    return value[lang] || value.zh || value.en || '';
-  }
-
-  function normalizeTags(value) {
-    if (!value) return [];
-    if (Array.isArray(value)) return value.map((item) => String(item).trim()).filter(Boolean);
-    if (typeof value === 'object') {
-      const lang = localStorage.getItem('lang') || 'zh';
-      const candidate = value[lang] || value.zh || value.en || [];
-      if (Array.isArray(candidate)) return candidate.map((item) => String(item).trim()).filter(Boolean);
-      if (typeof candidate === 'string') return candidate.split(',').map((item) => item.trim()).filter(Boolean);
-    }
-    if (typeof value === 'string') return value.split(',').map((item) => item.trim()).filter(Boolean);
-    return [];
-  }
-
-  function normalizeList(value) {
-    if (!value) return [];
-    if (Array.isArray(value)) return value.map((item) => String(item).trim()).filter(Boolean);
-    if (typeof value === 'string') return value.split(',').map((item) => item.trim()).filter(Boolean);
-    return [];
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
   function slugify(text) {
@@ -110,303 +95,130 @@
       .replace(/-{2,}/g, '-');
   }
 
-  function extractJsonMeta(body) {
-    const source = body || '';
-    const patterns = [
-      /```json\s*([\s\S]*?)```/i,
-      /```character\s*([\s\S]*?)```/i,
-      /<!--\s*meta\s*([\s\S]*?)-->/i
-    ];
-
-    for (const pattern of patterns) {
-      const match = source.match(pattern);
-      if (match && match[1]) {
-        try {
-          return JSON.parse(match[1].trim());
-        } catch (err) {
-          // ignore parse failure and continue
-        }
-      }
-    }
-
-    const trimmed = source.trim();
-    if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
-      try {
-        return JSON.parse(trimmed);
-      } catch (err) {
-        return null;
-      }
-    }
-
-    return null;
-  }
-
   function extractAllImages(body) {
-    const text = body || '';
     const urls = [];
-
-    const htmlRegex = /<img\s[^>]*src=["'](https?:\/\/[^"']+)["']/gi;
+    const htmlRe = /<img\s[^>]*src=["'](https?:\/\/[^"']+)["']/gi;
+    const mdRe = /!\[[^\]]*\]\((https?:\/\/[^)\s]+)\)/gi;
     let m;
-    while ((m = htmlRegex.exec(text)) !== null) urls.push(m[1]);
-
-    const mdRegex = /!\[[^\]]*\]\((https?:\/\/[^)\s]+)\)/gi;
-    while ((m = mdRegex.exec(text)) !== null) urls.push(m[1]);
-
+    while ((m = htmlRe.exec(body || '')) !== null) urls.push(m[1]);
+    while ((m = mdRe.exec(body || '')) !== null) urls.push(m[1]);
     return urls;
   }
 
-  function buildImageListFromMarkers(metaValue, bodyImages) {
-    const list = [];
-
-    if (Array.isArray(metaValue)) {
-      metaValue.forEach((v) => {
-        const trimmed = String(v).trim();
-        if (!trimmed) return;
-
-        const numMatch = trimmed.match(/^<!--\s*image:(\d+)\s*-->$/i);
-        if (numMatch) {
-          const idx = parseInt(numMatch[1], 10) - 1;
-          if (idx >= 0 && idx < bodyImages.length) list.push(bodyImages[idx]);
-          return;
+  function buildTagIndex(tagSystem) {
+    const index = {};
+    const tierKeys = {};
+    for (const [category, entries] of Object.entries(tagSystem)) {
+      if (category === 'version' || category === 'description' || category === 'naming_rule') continue;
+      if (typeof entries !== 'object' || entries === null) continue;
+      for (const [key, translations] of Object.entries(entries)) {
+        if (typeof translations !== 'object' || translations === null) continue;
+        for (const [lang, text] of Object.entries(translations)) {
+          if (!text) continue;
+          const lower = text.toLowerCase();
+          if (!index[lower]) index[lower] = [];
+          index[lower].push({ key, category, lang });
         }
-
-        list.push(trimmed);
-      });
-    } else if (typeof metaValue === 'string' && metaValue.trim()) {
-      const trimmed = metaValue.trim();
-
-      const numMatch = trimmed.match(/^<!--\s*image:(\d+)\s*-->$/i);
-      if (numMatch) {
-        const idx = parseInt(numMatch[1], 10) - 1;
-        if (idx >= 0 && idx < bodyImages.length) list.push(bodyImages[idx]);
-        return list;
-      }
-
-      list.push(trimmed);
-    }
-
-    return list;
-  }
-
-  function buildImageList(metaValue, fallbackFromBody) {
-    const list = [];
-
-    if (Array.isArray(metaValue)) {
-      metaValue.forEach((v) => { if (v && v.trim()) list.push(v.trim()); });
-    } else if (typeof metaValue === 'string' && metaValue.trim()) {
-      list.push(metaValue.trim());
-    }
-
-    if (!list.length && fallbackFromBody) {
-      fallbackFromBody.forEach((u) => { if (u && !list.includes(u)) list.push(u); });
-    }
-
-    return list;
-  }
-
-        const numMatch2 = trimmed.match(/^(\d+)$/);
-        if (numMatch2) {
-          const idx = parseInt(numMatch2[1], 10) - 1;
-          if (idx >= 0 && idx < bodyImages.length) list.push(bodyImages[idx]);
-          return;
+        if (category === 'tier_system') {
+          tierKeys[key] = translations;
         }
-
-        list.push(trimmed);
-      });
-    } else if (typeof metaValue === 'string' && metaValue.trim()) {
-      const trimmed = metaValue.trim();
-
-      const numMatch = trimmed.match(/^<!--\s*image:(\d+)\s*-->$/i);
-      if (numMatch) {
-        const idx = parseInt(numMatch[1], 10) - 1;
-        if (idx >= 0 && idx < bodyImages.length) list.push(bodyImages[idx]);
-        return list;
-      }
-
-      const numMatch2 = trimmed.match(/^(\d+)$/);
-      if (numMatch2) {
-        const idx = parseInt(numMatch2[1], 10) - 1;
-        if (idx >= 0 && idx < bodyImages.length) list.push(bodyImages[idx]);
-        return list;
-      }
-
-      list.push(trimmed);
-    }
-
-    return list;
-  }
-
-  function buildImageList(metaValue, fallbackFromBody) {
-    const list = [];
-
-    if (Array.isArray(metaValue)) {
-      metaValue.forEach((v) => {
-        const trimmed = String(v).trim();
-        if (!trimmed) return;
-
-        const numMatch = trimmed.match(/^<!--\s*image:(\d+)\s*-->$/i);
-        if (numMatch) {
-          const idx = parseInt(numMatch[1], 10) - 1;
-          if (idx >= 0 && idx < bodyImages.length) list.push(bodyImages[idx]);
-          return;
-        }
-
-        const numMatch2 = trimmed.match(/^(\d+)$/);
-        if (numMatch2) {
-          const idx = parseInt(numMatch2[1], 10) - 1;
-          if (idx >= 0 && idx < bodyImages.length) list.push(bodyImages[idx]);
-          return;
-        }
-
-        const numMatch3 = trimmed.match(/^<!--\s*image:(\d+)\s*-->$/i);
-        if (numMatch3) {
-          const idx = parseInt(numMatch3[1], 10) - 1;
-          if (idx >= 0 && idx < bodyImages.length) list.push(bodyImages[idx]);
-          return;
-        }
-
-        const numMatch4 = trimmed.match(/^(\d+)$/);
-        if (numMatch4) {
-          const idx = parseInt(numMatch4[1], 10) - 1;
-          if (idx >= 0 && idx < bodyImages.length) list.push(bodyImages[idx]);
-          return;
-        }
-
-        list.push(trimmed);
-      });
-    } else if (typeof metaValue === 'string' && metaValue.trim()) {
-      list.push(metaValue.trim());
-    }
-
-    if (!list.length && fallbackFromBody) {
-      fallbackFromBody.forEach((u) => { if (u && !list.includes(u)) list.push(u); });
-    }
-
-    return list;
-  }
-
-  function readLabel(labels, prefix) {
-    const found = (labels || []).find((label) => typeof label.name === 'string' && label.name.toLowerCase().startsWith(prefix));
-    if (!found) return '';
-    return found.name.slice(prefix.length).trim();
-  }
-
-  function inferTier(meta, labels) {
-    const fromMeta = String(meta.ootqTier || '').toLowerCase();
-    if (['top', 'high', 'mid', 'low'].includes(fromMeta)) return fromMeta;
-
-    const fromLabel = String(readLabel(labels, 'tier:')).toLowerCase();
-    if (['top', 'high', 'mid', 'low'].includes(fromLabel)) return fromLabel;
-
-    return 'unknown';
-  }
-
-  function inferLevel(meta, labels, tier) {
-    if (meta.ootqLevel) return pickLocalized(meta.ootqLevel);
-    const levelLabel = readLabel(labels, 'level:');
-    if (levelLabel) return levelLabel;
-    if (tier === 'unknown') return '未标注';
-    return tier.toUpperCase();
-  }
-
-  function bodyWithoutJsonBlock(body) {
-    return String(body || '')
-      .replace(/```json\s*[\s\S]*?```/ig, '')
-      .replace(/```character\s*[\s\S]*?```/ig, '')
-      .replace(/<!--\s*meta\s*[\s\S]*?-->/ig, '')
-      .trim();
-  }
-
-  function renderDescription(text) {
-    const raw = String(text || '').trim();
-    if (!raw) return '<p class="empty">暂无详细描述</p>';
-
-    const noScript = raw.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/ig, '');
-
-    if (typeof marked !== 'undefined' && marked.parse) {
-      try {
-        return marked.parse(noScript);
-      } catch (e) {
-        // fallback
       }
     }
+    return { index, tierKeys };
+  }
 
-    const hasHtml = /<\/?[a-z][\s\S]*>/i.test(noScript);
-    if (hasHtml) return noScript;
+  function scanTags(body, tagIndex) {
+    if (!body) return [];
+    const lowerBody = body.toLowerCase();
+    const found = new Map();
+    for (const [lowerText, entries] of Object.entries(tagIndex)) {
+      if (lowerBody.includes(lowerText)) {
+        for (const entry of entries) {
+          if (!found.has(entry.key)) {
+            found.set(entry.key, { key: entry.key, category: entry.category });
+          }
+        }
+      }
+    }
+    return [...found.values()];
+  }
 
-    return noScript
-      .split(/\n{2,}/)
-      .map((paragraph) => '<p>' + escapeHtml(paragraph).replace(/\n/g, '<br>') + '</p>')
-      .join('');
+  function detectTier(matchedTags, tierKeys) {
+    for (const tag of matchedTags) {
+      const trans = tierKeys[tag.key];
+      if (!trans) continue;
+      const prefix = Object.keys(tierMap).find(p => tag.key.startsWith(p));
+      return {
+        tier: prefix ? tierMap[prefix] : 'unknown',
+        level: trans
+      };
+    }
+    return { tier: 'unknown', level: null };
+  }
+
+  function getLocalizedSection(body, lang) {
+    if (!body) return '';
+    const langs = lang === 'ja' ? ['ja', 'jp'] : [lang];
+    for (const l of langs) {
+      const tag = '<!-- ' + l + ' -->';
+      const startIdx = body.indexOf(tag);
+      if (startIdx === -1) continue;
+      const contentStart = startIdx + tag.length;
+      const endIdx = body.indexOf(tag, contentStart);
+      if (endIdx === -1) continue;
+      return body.slice(contentStart, endIdx).trim();
+    }
+    return body;
   }
 
   function parseCharacter(issue) {
-    const meta = extractJsonMeta(issue.body) || {};
-    const title = pickLocalized(meta.title) || issue.title || ('Issue #' + issue.number);
-    const tier = inferTier(meta, issue.labels);
-    const level = inferLevel(meta, issue.labels, tier);
-    const slugLabel = readLabel(issue.labels, 'slug:');
-    const slug = String(meta.slug || slugLabel || slugify(title) || ('issue-' + issue.number));
-    const tags = normalizeTags(meta.tags);
-    const activation = normalizeList(meta.activation);
-    const techniques = normalizeList(meta.techniques);
-    const fallbackBody = bodyWithoutJsonBlock(issue.body);
-    const bodyImages = extractAllImages(issue.body);
+    if (!issue.body || issue.body.length < 10) return null;
 
-    const images = buildImageListFromMarkers(meta.image || meta.images, bodyImages);
-    const detailImages = buildImageListFromMarkers(meta.detailImages, bodyImages);
+    const slug = slugify(issue.title) || ('issue-' + issue.number);
+    const images = extractAllImages(issue.body);
 
-    return {
-      id: issue.id,
-      number: issue.number,
-      slug,
-      title,
-      summary: pickLocalized(meta.summary) || '',
-      description: pickLocalized(meta.description) || fallbackBody,
-      tier,
-      level,
-      origin: meta.origin || '',
-      author: meta.author || '',
-      tags,
-      activation,
-      techniques,
-      downloadUrl: meta.downloadUrl || '',
-      images,
-      detailImages,
-      issueUrl: issue.html_url,
-      updatedAt: issue.updated_at
-    };
-    }
-
-    if (images.length > 1 || detailImages.length > 1) {
-      console.log('[Carousel Debug] slug:', slug, 'images:', images, 'detailImages:', detailImages);
+    const tagsByLang = {};
+    const summaryByLang = {};
+    const bodyByLang = {};
+    let defaultTier = 'unknown';
+    let defaultLevel = null;
+    for (const lang of ['zh', 'en', 'ja']) {
+      const section = getLocalizedSection(issue.body, lang);
+      bodyByLang[lang] = section;
+      tagsByLang[lang] = scanTags(section, state.tagIndex);
+      const bodyText = section.replace(/^#+\s.*$/gm, '').trim();
+      summaryByLang[lang] = bodyText.split(/\n{2,}/)[0]
+        ?.replace(/\n/g, ' ').replace(/\s+/g, ' ').slice(0, 120).trim() || '';
+      if (lang === 'zh') {
+        const tierInfo = detectTier(tagsByLang[lang], state.tierKeys);
+        defaultTier = tierInfo.tier;
+        defaultLevel = tierInfo.level;
+      }
     }
 
     return {
       id: issue.id,
       number: issue.number,
       slug,
-      title,
-      summary: pickLocalized(meta.summary) || '',
-      description: pickLocalized(meta.description) || fallbackBody,
-      tier,
-      level,
-      origin: meta.origin || '',
-      author: meta.author || '',
-      tags,
-      activation,
-      techniques,
-      downloadUrl: meta.downloadUrl || '',
+      title: issue.title || ('Issue #' + issue.number),
+      body: issue.body,
       images,
-      detailImages,
       issueUrl: issue.html_url,
-      updatedAt: issue.updated_at
+      updatedAt: issue.updated_at,
+      tagsByLang,
+      summaryByLang,
+      bodyByLang,
+      tier: defaultTier,
+      level: defaultLevel
     };
   }
 
   async function fetchCharacters() {
-    const allIssues = [];
+    const tagIndexData = buildTagIndex(TAG_SYSTEM);
+    state.tagIndex = tagIndexData.index;
+    state.tierKeys = tagIndexData.tierKeys;
 
+    const allIssues = [];
     for (let page = 1; page <= CONFIG.maxPages; page += 1) {
       const url = new URL('https://api.github.com/repos/' + CONFIG.owner + '/' + CONFIG.repo + '/issues');
       url.searchParams.set('state', 'all');
@@ -415,41 +227,19 @@
       url.searchParams.set('page', String(page));
       url.searchParams.set('sort', 'updated');
       url.searchParams.set('direction', 'desc');
-
       const response = await fetch(url.toString(), {
-        headers: {
-          Accept: 'application/vnd.github+json'
-        }
+        headers: { Accept: 'application/vnd.github+json' }
       });
-
-      if (!response.ok) {
-        throw new Error('GitHub API 请求失败: HTTP ' + response.status);
-      }
-
+      if (!response.ok) throw new Error('GitHub API request failed: HTTP ' + response.status);
       const chunk = await response.json();
-      allIssues.push(...chunk.filter((item) => !item.pull_request));
+      allIssues.push(...chunk.filter(item => !item.pull_request));
       if (chunk.length < CONFIG.perPage) break;
     }
-
-    return allIssues.map(parseCharacter).sort((a, b) => {
-      if (tierOrder[a.tier] !== tierOrder[b.tier]) return tierOrder[a.tier] - tierOrder[b.tier];
-      return a.title.localeCompare(b.title, 'zh-Hans-CN');
-    });
+    return allIssues.map(parseCharacter).filter(Boolean);
   }
 
   function tierClass(tier) {
     return ['top', 'high', 'mid', 'low'].includes(tier) ? tier : 'low';
-  }
-
-  function tierText(tier) {
-    const map = {
-      top: '论外最上位',
-      high: '论外上位',
-      mid: '论外中位',
-      low: '论外下位',
-      unknown: '未标注'
-    };
-    return map[tier] || map.unknown;
   }
 
   function detailUrl(slug) {
@@ -458,57 +248,59 @@
     return url.pathname + url.search;
   }
 
-  function renderCards(items) {
-    refs.cardGrid.innerHTML = '';
+  function tierLabel(tier, level) {
+    const lang = state.lang;
+    if (level && typeof level === 'object') return level[lang] || level.zh || '';
+    if (typeof level === 'string') return level;
+    return '\u672A\u6807\u6CE8';
+  }
 
+  function tagLabel(tag, lang) {
+    const entries = TAG_SYSTEM[tag.category];
+    if (!entries) return tag.key;
+    const trans = entries[tag.key];
+    if (!trans) return tag.key;
+    return trans[lang] || trans.zh || tag.key;
+  }
+
+  function renderDescription(text) {
+    const raw = String(text || '').trim();
+    if (!raw) return '<p class="empty">\u6682\u65E0\u8BE6\u7EC6\u63CF\u8FF0</p>';
+    const clean = raw.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/ig, '');
+    if (typeof marked !== 'undefined' && marked.parse) {
+      try { return marked.parse(clean); } catch (e) {}
+    }
+    const hasHtml = /<\/?[a-z][\s\S]*>/i.test(clean);
+    if (hasHtml) return clean;
+    return clean.split(/\n{2,}/).map(p => '<p>' + escapeHtml(p).replace(/\n/g, '<br>') + '</p>').join('');
+  }
+
+  function renderCards(items, lang) {
+    refs.cardGrid.innerHTML = '';
     if (!items.length) {
-      refs.cardGrid.innerHTML = '<div class="empty-state">没有匹配角色</div>';
+      refs.cardGrid.innerHTML = '<div class="empty-state">\u6CA1\u6709\u5339\u914D\u89D2\u8272</div>';
       return;
     }
-
     const fragment = document.createDocumentFragment();
-
     for (const item of items) {
       const card = document.createElement('article');
       card.className = 'card issue-card';
       card.style.cursor = 'pointer';
-
+      const levelText = tierLabel(item.tier, item.level);
+      const tags = item.tagsByLang[lang] || [];
       card.innerHTML = [
-        item.images.length ? '<img class="issue-thumb" src="' + escapeHtml(item.images[0]) + '" alt="' + escapeHtml(item.title) + '">' : '',
+        item.images.length ? '<img class="issue-thumb" src="' + escapeHtml(item.images[0]) + '" alt="' + escapeHtml(item.title) + '" loading="lazy">' : '',
         '<div class="issue-head">',
         '<h3>' + escapeHtml(item.title) + '</h3>',
-        '<span class="ootq-badge ootq-' + tierClass(item.tier) + '">' + escapeHtml(item.level) + '</span>',
+        levelText ? '<span class="ootq-badge ootq-' + tierClass(item.tier) + '">' + escapeHtml(levelText) + '</span>' : '',
         '</div>',
-        item.summary ? '<p class="issue-summary">' + escapeHtml(item.summary) + '</p>' : '<p class="issue-summary muted">暂无摘要</p>',
-        item.tags.length ? '<div class="tags">' + item.tags.slice(0, 5).map((tag) => '<span class="tag">' + escapeHtml(tag) + '</span>').join('') + '</div>' : ''
+        (item.summaryByLang[lang] || item.summaryByLang.zh) ? '<p class="issue-summary">' + escapeHtml(item.summaryByLang[lang] || item.summaryByLang.zh) + '</p>' : '',
+        tags.length ? '<div class="tags">' + tags.slice(0, 6).map(t => '<span class="tag">' + escapeHtml(tagLabel(t, lang)) + '</span>').join('') + '</div>' : ''
       ].join('');
-
       card.addEventListener('click', () => openDetail(item.slug));
       fragment.appendChild(card);
     }
-
     refs.cardGrid.appendChild(fragment);
-  }
-
-  function renderMetaRows(item) {
-    const rows = [];
-
-    function pushRow(label, value) {
-      if (!value) return;
-      rows.push('<tr><th>' + escapeHtml(label) + '</th><td>' + value + '</td></tr>');
-    }
-
-    pushRow('分级', '<span class="ootq-badge ootq-' + tierClass(item.tier) + '">' + escapeHtml(item.level) + '</span>');
-    pushRow('层级', escapeHtml(tierText(item.tier)));
-    pushRow('作者', escapeHtml(item.author));
-    pushRow('来源', escapeHtml(item.origin));
-    pushRow('启动方式', escapeHtml(item.activation.join(' / ')));
-    pushRow('技术', escapeHtml(item.techniques.join(' / ')));
-    pushRow('标签', item.tags.length ? '<div class="tags">' + item.tags.map((tag) => '<span class="tag">' + escapeHtml(tag) + '</span>').join('') + '</div>' : '');
-    pushRow('下载', item.downloadUrl ? '<a href="' + escapeHtml(item.downloadUrl) + '" target="_blank" rel="noopener">下载链接</a>' : '');
-    pushRow('Issue', '<a href="' + escapeHtml(item.issueUrl) + '" target="_blank" rel="noopener">#' + item.number + '</a>');
-
-    return rows.join('');
   }
 
   async function fetchComments(issueNumber) {
@@ -533,68 +325,30 @@
     ].join('');
   }
 
-  function renderCarousel(imageList, containerClass) {
-    if (!imageList.length) return '';
-    const id = 'carousel-' + containerClass + '-' + Math.random().toString(36).slice(2, 8);
-    const slides = imageList.map((item, i) => {
-      const isHtml = /<img\s/i.test(item);
-      const content = isHtml ? item : '<img src="' + escapeHtml(item) + '" alt="" loading="lazy">';
-      return '<div class="carousel-slide' + (i === 0 ? ' active' : '') + '">' + content + '</div>';
-    }).join('');
-
-    return [
-      '<div class="carousel ' + escapeHtml(containerClass) + '" id="' + id + '" data-index="0" data-total="' + imageList.length + '">',
-      '<div class="carousel-viewport">' + slides + '</div>',
-      imageList.length > 1 ? [
-        '<button class="carousel-btn carousel-prev" data-dir="-1" type="button">&#8249;</button>',
-        '<button class="carousel-btn carousel-next" data-dir="1" type="button">&#8250;</button>',
-        '<span class="carousel-counter">1 / ' + imageList.length + '</span>'
-      ].join('') : '',
-      '</div>'
-    ].join('');
-  }
-
-  function renderDetail(item) {
+  function renderDetail(item, lang) {
+    const tags = item.tagsByLang[lang] || [];
+    const localizedBody = item.bodyByLang[lang] || getLocalizedSection(item.body, lang);
+    const levelText = tierLabel(item.tier, item.level);
     refs.detail.innerHTML = [
       '<div class="detail-header">',
-      '<button class="btn" id="backToList" type="button">返回列表</button>',
-      '<a class="btn" href="' + escapeHtml(item.issueUrl) + '" target="_blank" rel="noopener">打开 Issue</a>',
+      '<button class="btn" id="backToList" type="button">\u2190 \u8FD4\u56DE\u5217\u8868</button>',
+      '<a class="btn" href="' + escapeHtml(item.issueUrl) + '" target="_blank" rel="noopener">\u5728 GitHub \u67E5\u770B #' + item.number + '</a>',
       '</div>',
-      '<div class="character-page">',
-      '<aside class="infobox">',
-      '<div class="infobox-header"><h1>' + escapeHtml(item.title) + '</h1></div>',
-      item.images.length ? '<div class="infobox-image">' + renderCarousel(item.images, 'preview') + '</div>' : '',
-      '<table class="infobox-table">' + renderMetaRows(item) + '</table>',
-      '</aside>',
-      '<article class="article-body markdown-body">',
-      item.summary ? '<p class="lead">' + escapeHtml(item.summary) + '</p>' : '',
-      '<div>' + renderDescription(item.description) + '</div>',
-      item.detailImages.length ? '<div class="detail-images">' + renderCarousel(item.detailImages, 'detail') + '</div>' : '',
+      '<article class="markdown-body">',
+      '<h1 class="detail-title">' + escapeHtml(item.title) + '</h1>',
+      '<div class="detail-meta">',
+      levelText ? '<span class="ootq-badge ootq-' + tierClass(item.tier) + '">' + escapeHtml(levelText) + '</span>' : '',
+      tags.length ? ' <span class="tags">' + tags.map(t => '<span class="tag">' + escapeHtml(tagLabel(t, lang)) + '</span>').join('') + '</span>' : '',
+      '</div>',
+      '<hr class="detail-divider">',
+      renderDescription(localizedBody),
       '</article>',
-      '</div>',
       '<section class="comments-section">',
-      '<h2>评论</h2>',
-      '<div id="commentsLoading" class="info-box">正在加载评论...</div>',
+      '<h2>\u8BC4\u8BBA</h2>',
+      '<div id="commentsLoading" class="info-box">\u6B63\u5728\u52A0\u8F7D\u8BC4\u8BBA...</div>',
       '<div id="commentsList"></div>',
       '</section>'
     ].join('');
-
-    refs.detail.querySelectorAll('.carousel-btn').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const carousel = btn.closest('.carousel');
-        const dir = parseInt(btn.dataset.dir, 10);
-        const total = parseInt(carousel.dataset.total, 10);
-        let idx = parseInt(carousel.dataset.index, 10);
-        idx = (idx + dir + total) % total;
-        carousel.dataset.index = idx;
-        carousel.querySelectorAll('.carousel-slide').forEach((s, i) => {
-          s.classList.toggle('active', i === idx);
-        });
-        const counter = carousel.querySelector('.carousel-counter');
-        if (counter) counter.textContent = (idx + 1) + ' / ' + total;
-      });
-    });
 
     const backBtn = document.getElementById('backToList');
     if (backBtn) {
@@ -606,12 +360,12 @@
       });
     }
 
-    fetchComments(item.number).then((comments) => {
+    fetchComments(item.number).then(comments => {
       const loading = document.getElementById('commentsLoading');
       const list = document.getElementById('commentsList');
       if (loading) loading.style.display = 'none';
       if (!comments.length) {
-        list.innerHTML = '<p class="muted">暂无评论，<a href="' + escapeHtml(item.issueUrl) + '" target="_blank" rel="noopener">前往 GitHub 评论</a></p>';
+        list.innerHTML = '<p class="muted">\u6682\u65E0\u8BC4\u8BBA\uFF0C<a href="' + escapeHtml(item.issueUrl) + '" target="_blank" rel="noopener">\u524D\u5F80 GitHub \u8BC4\u8BBA</a></p>';
         return;
       }
       list.innerHTML = comments.map(renderComment).join('');
@@ -619,7 +373,7 @@
       const loading = document.getElementById('commentsLoading');
       const list = document.getElementById('commentsList');
       if (loading) loading.style.display = 'none';
-      list.innerHTML = '<p class="muted">评论加载失败</p>';
+      list.innerHTML = '<p class="muted">\u8BC4\u8BBA\u52A0\u8F7D\u5931\u8D25</p>';
     });
   }
 
@@ -628,47 +382,42 @@
     renderByRoute();
   }
 
-  function applyFilters() {
+  function applyFilters(lang) {
     const keyword = refs.search.value.trim().toLowerCase();
-    const tier = refs.tier.value;
+    const tierFilter = refs.tier.value;
 
-    state.filtered = state.all.filter((item) => {
-      const searchBlob = [
-        item.slug,
-        item.title,
-        item.summary,
-        item.author,
-        item.origin,
-        item.tags.join(' '),
-        item.techniques.join(' '),
-        item.activation.join(' ')
-      ].join(' ').toLowerCase();
-
-      const tierOk = tier === 'all' ? true : item.tier === tier;
+    state.filtered = state.all.filter(item => {
+      const tags = item.tagsByLang[lang] || item.tagsByLang.zh || [];
+      const tagTexts = tags.map(t => tagLabel(t, lang).toLowerCase()).join(' ');
+      const searchBlob = [item.slug, item.title, tagTexts].join(' ').toLowerCase();
+      const tierOk = tierFilter === 'all' || item.tier === tierFilter;
       const keywordOk = keyword ? searchBlob.includes(keyword) : true;
       return tierOk && keywordOk;
+    }).sort((a, b) => {
+      if (tierOrder[a.tier] !== tierOrder[b.tier]) return tierOrder[a.tier] - tierOrder[b.tier];
+      return a.title.localeCompare(b.title, 'zh-Hans-CN');
     });
 
-    refs.resultCount.textContent = '共 ' + state.filtered.length + ' 条';
-    renderCards(state.filtered);
+    refs.resultCount.textContent = '\u5171 ' + state.filtered.length + ' \u6761';
+    renderCards(state.filtered, lang);
   }
 
   function renderByRoute() {
+    if (!state.all) return;
+    const lang = state.lang;
     const slug = new URLSearchParams(window.location.search).get('slug');
-
     if (slug) {
-      const match = state.all.find((item) => item.slug === slug);
+      const match = state.all.find(item => item.slug === slug);
       if (match) {
         refs.list.style.display = 'none';
         refs.detail.style.display = 'block';
-        renderDetail(match);
+        renderDetail(match, lang);
         return;
       }
     }
-
     refs.detail.style.display = 'none';
     refs.list.style.display = 'block';
-    applyFilters();
+    applyFilters(lang);
   }
 
   function showError(message) {
@@ -682,24 +431,26 @@
   async function bootstrap() {
     if (state.loading) return;
     state.loading = true;
-
     refs.loading.style.display = 'block';
     refs.error.style.display = 'none';
-
     try {
       state.all = await fetchCharacters();
       refs.loading.style.display = 'none';
       renderByRoute();
     } catch (error) {
-      showError(error && error.message ? error.message : '加载失败，请稍后重试。');
+      showError(error && error.message ? error.message : '\u52A0\u8F7D\u5931\u8D25\uFF0C\u8BF7\u7A0D\u540E\u91CD\u8BD5\u3002');
     } finally {
       state.loading = false;
     }
   }
 
-  refs.search.addEventListener('input', applyFilters);
-  refs.tier.addEventListener('change', applyFilters);
+  refs.search.addEventListener('input', () => applyFilters(state.lang));
+  refs.tier.addEventListener('change', () => applyFilters(state.lang));
   refs.reload.addEventListener('click', bootstrap);
+  document.getElementById('langSelect')?.addEventListener('change', function () {
+    setLang(this.value);
+    if (state.all) renderByRoute();
+  });
   window.addEventListener('popstate', renderByRoute);
 
   bootstrap();
@@ -707,297 +458,34 @@
 </script>
 
 <style>
-.issue-cms-controls {
-  margin: 10px 0 20px;
-}
+.issue-cms-controls { margin: 10px 0 20px; }
+.filter-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.muted { color: var(--text-secondary); }
 
-.filter-row {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.muted {
-  color: var(--text-secondary);
-}
-
-.issue-card {
-  display: flex;
-  flex-direction: column;
-}
-
+.issue-card { display: flex; flex-direction: column; }
 .issue-thumb {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
-  border-radius: 6px;
-  margin-bottom: 10px;
-  background: var(--bg-secondary);
+  width: 100%; height: 160px; object-fit: cover;
+  border-radius: 6px; margin-bottom: 10px; background: var(--bg-secondary);
 }
+.issue-head { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; margin-bottom: 8px; }
+.issue-head h3 { margin: 0; }
+.issue-summary { margin: 0; min-height: 1.5em; font-size: 0.9em; color: var(--text-secondary); }
 
-.issue-head {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  align-items: flex-start;
-  margin-bottom: 8px;
-}
+.detail-header { display: flex; gap: 10px; margin-bottom: 16px; }
+.detail-title { margin-top: 0; }
+.detail-meta { margin: 8px 0 4px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.detail-divider { margin: 16px 0; }
 
-.issue-head h3 {
-  margin: 0;
-}
-
-.issue-summary {
-  margin: 0;
-  min-height: 3.4em;
-}
-
-.detail-header {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.character-page {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  align-items: flex-start;
-}
-
-.infobox {
-  width: 280px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.infobox-header {
-  background: var(--bg-card);
-  padding: 12px 15px;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.infobox-header h1 {
-  font-size: 1.2em;
-  margin: 0;
-  border: 0;
-  padding: 0;
-}
-
-.infobox-image {
-  padding: 10px;
-  text-align: center;
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border-color);
-}
-
-.infobox-image img {
-  max-width: 100%;
-  max-height: 250px;
-  border-radius: 4px;
-}
-
-.carousel {
-  position: relative;
-  display: inline-block;
-  width: 100%;
-}
-
-.carousel-viewport {
-  position: relative;
-  width: 100%;
-  text-align: center;
-}
-
-.carousel-slide {
-  display: none;
-  width: 100%;
-  border-radius: 4px;
-}
-
-.carousel-slide.active {
-  display: block;
-}
-
-.carousel-slide img {
-  display: block;
-  max-width: 100%;
-}
-
-.carousel.preview .carousel-slide.active {
-  max-height: 250px;
-}
-
-.carousel.preview .carousel-slide.active img {
-  max-height: 250px;
-  object-fit: contain;
-  margin: 0 auto;
-}
-
-.carousel.detail .carousel-slide.active {
-  max-height: 480px;
-}
-
-.carousel.detail .carousel-slide.active img {
-  max-height: 480px;
-  object-fit: contain;
-  margin: 0 auto;
-}
-
-.carousel-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0,0,0,0.45);
-  color: #fff;
-  border: none;
-  font-size: 1.4em;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  cursor: pointer;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-  transition: background 0.2s;
-}
-
-.carousel-btn:hover {
-  background: rgba(0,0,0,0.7);
-}
-
-.carousel-prev {
-  left: 6px;
-}
-
-.carousel-next {
-  right: 6px;
-}
-
-.carousel-counter {
-  position: absolute;
-  bottom: 6px;
-  right: 6px;
-  background: rgba(0,0,0,0.5);
-  color: #fff;
-  font-size: 0.75em;
-  padding: 2px 8px;
-  border-radius: 10px;
-  z-index: 2;
-}
-
-.detail-images {
-  margin-top: 20px;
-}
-
-.detail-images .carousel {
-  display: block;
-  text-align: center;
-}
-
-.detail-images .carousel-slide.active {
-  width: 100%;
-  object-fit: contain;
-}
-
-.infobox-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9em;
-}
-
-.infobox-table th,
-.infobox-table td {
-  padding: 8px 12px;
-  border-bottom: 1px solid var(--border-color);
-  text-align: left;
-  vertical-align: top;
-}
-
-.infobox-table th {
-  background: var(--bg-card);
-  width: 34%;
-  color: var(--text-secondary);
-}
-
-.article-body {
-  flex: 1;
-  min-width: 0;
-}
-
-.article-body .lead {
-  font-size: 1.06em;
-  color: var(--text-secondary);
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.empty {
-  color: var(--text-secondary);
-  font-style: italic;
-}
-
-.comments-section {
-  margin-top: 32px;
-  padding-top: 20px;
-  border-top: 1px solid var(--border-color);
-}
-
-.comments-section h2 {
-  font-size: 1.2em;
-  font-weight: 500;
-  margin-bottom: 16px;
-}
-
+.comments-section { margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--border-color); }
+.comments-section h2 { font-size: 1.2em; font-weight: 500; margin-bottom: 16px; }
 .comment-item {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 14px 16px;
-  margin-bottom: 12px;
+  background: var(--bg-card); border: 1px solid var(--border-color);
+  border-radius: 8px; padding: 14px 16px; margin-bottom: 12px;
 }
-
-.comment-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.comment-avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-}
-
-.comment-author {
-  font-weight: 600;
-  font-size: 0.92em;
-}
-
-.comment-date {
-  color: var(--text-secondary);
-  font-size: 0.82em;
-}
-
-.comment-body {
-  font-size: 0.94em;
-}
-
-@media (max-width: 780px) {
-  .character-page {
-    flex-direction: column;
-  }
-
-  .infobox {
-    width: 100%;
-  }
-}
+.comment-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.comment-avatar { width: 28px; height: 28px; border-radius: 50%; }
+.comment-author { font-weight: 600; font-size: 0.92em; }
+.comment-date { color: var(--text-secondary); font-size: 0.82em; }
+.comment-body { font-size: 0.94em; }
+.empty { color: var(--text-secondary); font-style: italic; }
 </style>
