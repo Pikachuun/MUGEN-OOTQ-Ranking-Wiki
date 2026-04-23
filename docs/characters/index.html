@@ -196,30 +196,13 @@
     return urls;
   }
 
-  function normalizeImageUrl(raw) {
-    if (!raw || typeof raw !== 'string') return '';
-    raw = raw.trim();
-    if (!raw) return '';
-
-    if (/^https?:\/\//i.test(raw)) return raw;
-
-    const htmlMatch = raw.match(/<img\s[^>]*src=["'](https?:\/\/[^"']+)["']/i);
-    if (htmlMatch) return htmlMatch[1];
-
-    if (raw.startsWith('/')) {
-      return 'https://raw.githubusercontent.com/' + CONFIG.owner + '/' + CONFIG.repo + '/' + CONFIG.branch + raw;
-    }
-    return 'https://raw.githubusercontent.com/' + CONFIG.owner + '/' + CONFIG.repo + '/' + CONFIG.branch + '/docs/img/' + raw;
-  }
-
   function buildImageList(metaValue, fallbackFromBody) {
     const list = [];
 
     if (Array.isArray(metaValue)) {
-      metaValue.forEach((v) => { const u = normalizeImageUrl(v); if (u) list.push(u); });
+      metaValue.forEach((v) => { if (v && v.trim()) list.push(v.trim()); });
     } else if (typeof metaValue === 'string' && metaValue.trim()) {
-      const u = normalizeImageUrl(metaValue);
-      if (u) list.push(u);
+      list.push(metaValue.trim());
     }
 
     if (!list.length && fallbackFromBody) {
@@ -298,14 +281,13 @@
     const bodyImages = extractAllImages(issue.body);
 
     const images = buildImageList(meta.image || meta.images, null);
-    if (!images.length && bodyImages.length) {
-      const u = normalizeImageUrl(bodyImages[0]);
-      if (u) images.push(u);
-    }
-
     const detailImages = buildImageList(meta.detailImages, null);
-    if (!detailImages.length && bodyImages.length > 1) {
-      bodyImages.slice(1).forEach((u) => { const n = normalizeImageUrl(u); if (n && !detailImages.includes(n)) detailImages.push(n); });
+
+    if (!images.length && !detailImages.length && bodyImages.length) {
+      images.push(bodyImages[0]);
+      if (bodyImages.length > 1) {
+        bodyImages.slice(1).forEach((u) => { if (u) detailImages.push(u); });
+      }
     }
 
     return {
@@ -462,9 +444,11 @@
   function renderCarousel(imageList, containerClass) {
     if (!imageList.length) return '';
     const id = 'carousel-' + containerClass + '-' + Math.random().toString(36).slice(2, 8);
-    const slides = imageList.map((src, i) =>
-      '<img class="carousel-slide' + (i === 0 ? ' active' : '') + '" src="' + escapeHtml(src) + '" alt="" loading="lazy">'
-    ).join('');
+    const slides = imageList.map((item, i) => {
+      const isHtml = /<img\s/i.test(item);
+      const content = isHtml ? item : '<img src="' + escapeHtml(item) + '" alt="" loading="lazy">';
+      return '<div class="carousel-slide' + (i === 0 ? ' active' : '') + '">' + content + '</div>';
+    }).join('');
 
     return [
       '<div class="carousel ' + escapeHtml(containerClass) + '" id="' + id + '" data-index="0" data-total="' + imageList.length + '">',
@@ -739,20 +723,37 @@
 
 .carousel-slide {
   display: none;
-  max-width: 100%;
+  width: 100%;
   border-radius: 4px;
 }
 
 .carousel-slide.active {
-  display: inline-block;
+  display: block;
+}
+
+.carousel-slide img {
+  display: block;
+  max-width: 100%;
 }
 
 .carousel.preview .carousel-slide.active {
   max-height: 250px;
 }
 
+.carousel.preview .carousel-slide.active img {
+  max-height: 250px;
+  object-fit: contain;
+  margin: 0 auto;
+}
+
 .carousel.detail .carousel-slide.active {
   max-height: 480px;
+}
+
+.carousel.detail .carousel-slide.active img {
+  max-height: 480px;
+  object-fit: contain;
+  margin: 0 auto;
 }
 
 .carousel-btn {
