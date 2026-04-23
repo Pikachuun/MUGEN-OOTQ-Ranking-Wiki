@@ -251,8 +251,16 @@
     const fallbackBody = bodyWithoutJsonBlock(issue.body);
     const bodyImages = extractAllImages(issue.body);
 
-    const images = buildImageList(meta.image || meta.images, bodyImages.slice(0, 1));
-    const detailImages = buildImageList(meta.detailImages, bodyImages.length > 1 ? bodyImages.slice(1) : []);
+    const images = buildImageList(meta.image || meta.images, null);
+    if (!images.length && bodyImages.length) {
+      const u = normalizeImageUrl(bodyImages[0]);
+      if (u) images.push(u);
+    }
+
+    const detailImages = buildImageList(meta.detailImages, null);
+    if (!detailImages.length && bodyImages.length > 1) {
+      bodyImages.slice(1).forEach((u) => { const n = normalizeImageUrl(u); if (n && !detailImages.includes(n)) detailImages.push(n); });
+    }
 
     return {
       id: issue.id,
