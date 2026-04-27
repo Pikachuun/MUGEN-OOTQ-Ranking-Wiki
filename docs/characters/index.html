@@ -6,6 +6,7 @@
   <title>Characters</title>
   <link rel="stylesheet" href="../styles.css">
   <link rel="stylesheet" href="../github-markdown.css">
+  <script src="../i18n-data.js"></script>
   <script src="../i18n.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
 </head>
@@ -19,9 +20,13 @@
       <div class="header-controls">
         <button id="themeToggle" class="btn" aria-label="Toggle theme">🌙</button>
         <select id="langSelect" class="lang-select">
+          
           <option value="zh">中文</option>
+          
           <option value="en">English</option>
+          
           <option value="ja">日本語</option>
+          
         </select>
       </div>
     </div>
@@ -77,7 +82,7 @@
 
 <script>
 (() => {
-  const TAG_SYSTEM = {"version":"2.0.0","description":{"zh":"MUGEN论外参照标准标签系统","en":"MUGEN Out-of-Topic Standard Tag System","ja":"MUGEN論外参照標準タグシステム"},"naming_rule":{"case":{"zh":"帕斯卡命名法（PascalCase）","en":"PascalCase","ja":"パスカルケース"},"format":{"zh":"标准英文短语","en":"Standard English Phrase","ja":"標準英語フレーズ"},"multilang_supported":true,"description":{"zh":"仅存储分级（tier_system）、启动技术（trigger_technique）、攻击技术（attack_technique）、效果技术（effect_technique）四类规范化标签，值字段支持多语言（zh/en/ja）","en":"Only stores four standardized categories: tier (tier_system), trigger (trigger_technique), attack (attack_technique), effect (effect_technique). Value fields support multilingual (zh/en/ja)","ja":"格付け（tier_system）、起動技術（trigger_technique）、攻撃技術（attack_technique）、効果技術（effect_technique）の4つのカテゴリのみを保存。値フィールドは多言語（zh/en/ja）をサポート"}},"tier_system":{"Top_Out":{"zh":"论外最上位","en":"Out-of-Topic Top","ja":"論外最上位"},"Lower_Out_C":{"zh":"论外下位C","en":"Out-of-Topic Low C","ja":"論外下位C"},"Lower_Out_B":{"zh":"论外下位B","en":"Out-of-Topic Low B","ja":"論外下位B"},"Lower_Out_A":{"zh":"论外下位A","en":"Out-of-Topic Low A","ja":"論外下位A"},"Mid_Out_C":{"zh":"论外中位C","en":"Out-of-Topic Mid C","ja":"論外中位C"},"Mid_Out_B":{"zh":"论外中位B","en":"Out-of-Topic Mid B","ja":"論外中位B"},"Mid_Out_A":{"zh":"论外中位A","en":"Out-of-Topic Mid A","ja":"論外中位A"},"Upper_Out_C":{"zh":"论外上位C","en":"Out-of-Topic High C","ja":"論外上位C"},"Upper_Out_B":{"zh":"论外上位B","en":"Out-of-Topic High B","ja":"論外上位B"},"Upper_Out_A":{"zh":"论外上位A","en":"Out-of-Topic High A","ja":"論外上位A"}},"trigger_technique":{"PercentN_Trigger":{"zh":"%N启动","en":"%N Trigger","ja":"%N起動"},"FourCA_Trigger":{"zh":"4CA启动","en":"4CA Trigger","ja":"4CA起動"},"StateDef_Overflow_Trigger":{"zh":"StateDef溢出启动","en":"StateDef Overflow Trigger","ja":"StateDefオーバーフロー起動"},"State_Overflow_Trigger":{"zh":"S溢出启动","en":"State Overflow Trigger","ja":"Stateオーバーフロー起動"},"DEF_Overflow_Trigger":{"zh":"DEF溢出启动","en":"DEF Overflow Trigger","ja":"DEFオーバーフロー起動"},"ZIP_Overflow_Trigger":{"zh":"ZIP溢出启动","en":"ZIP Overflow Trigger","ja":"ZIPオーバーフロー起動"},"SFF_Overflow_Trigger":{"zh":"SFF溢出启动","en":"SFF Overflow Trigger","ja":"SFFオーバーフロー起動"},"Alleg40_Hijack_Trigger":{"zh":"Alleg40劫持启动","en":"Alleg40 Hijack Trigger","ja":"Alleg40ハイジャック起動"},"Flag_Overflow_Trigger":{"zh":"Flag溢出启动","en":"Flag Overflow Trigger","ja":"Flagオーバーフロー起動"},"Overdrive_512_Trigger":{"zh":"512超越启动","en":"512 Overdrive Trigger","ja":"512オーバードライブ起動"}},"attack_technique":{"DTC_Fabrication_Attack":{"zh":"DTC型亲捏造","en":"DTC-Type Fabrication Attack","ja":"DTC型親捏造"},"Variable_Expansion_Fabrication_Attack":{"zh":"变量扩张型亲捏造","en":"Variable Expansion Fabrication Attack","ja":"変数拡張型親捏造"},"API_Source_Injection_Attack":{"zh":"API源代码注入攻击","en":"API Source Injection Attack","ja":"APIソース注入攻撃"},"MultiThreaded_API_Attack":{"zh":"多线程API攻击","en":"Multi-threaded API Attack","ja":"マルチスレッドAPI攻撃"}},"effect_technique":{"Death_Manipulation":{"zh":"直死","en":"Death Manipulation","ja":"即死操作"},"Player_Deletion":{"zh":"玩家删除","en":"Player Deletion","ja":"プレイヤー削除"},"Force_Victory":{"zh":"强制胜利","en":"Force Victory","ja":"強制勝利"},"Forced_Damage":{"zh":"强制伤害","en":"Forced Damage","ja":"強制ダメージ"},"Forced_Fall":{"zh":"强制落下","en":"Forced Fall","ja":"強制落下"},"Forced_Grab":{"zh":"强制投","en":"Forced Grab","ja":"強制投げ"},"Forced_Time_Stop":{"zh":"强制时停","en":"Forced Time Stop","ja":"強制時間停止"},"Invincibility_Removal":{"zh":"无敌解除","en":"Invincibility Removal","ja":"無敵解除"},"NOKO_Removal":{"zh":"NOKO解除","en":"NOKO Removal","ja":"NOKO解除"},"Life_Manipulation":{"zh":"生命值操作","en":"Life Manipulation","ja":"ライフ操作"},"CNS_Pointer_Manipulation":{"zh":"CNS指针操作","en":"CNS Pointer Manipulation","ja":"CNSポインタ操作"},"Round_Timer_Manipulation":{"zh":"回合计时器操作","en":"Round Timer Manipulation","ja":"ラウンドタイマー操作"},"Round_State_Manipulation":{"zh":"回合状态操作","en":"Round State Manipulation","ja":"ラウンド状態操作"},"Palette_Manipulation":{"zh":"调色板操作","en":"Palette Manipulation","ja":"パレット操作"},"Intro_Removal":{"zh":"开场解除","en":"Intro Removal","ja":"イントロ削除"},"Timer_Freeze_Removal":{"zh":"计时冻结解除","en":"Timer Freeze Removal","ja":"タイマーフリーズ解除"},"DEF_Protection":{"zh":"DEF保护","en":"DEF Protection","ja":"DEF保護"},"Player_Protection":{"zh":"玩家保护","en":"Player Protection","ja":"プレイヤー保護"},"Omni_Attribute_Attack":{"zh":"全属性攻击","en":"Omni Attribute Attack","ja":"全属性攻撃"},"Resurrection":{"zh":"复活","en":"Resurrection","ja":"復活"}}};
+  const TAG_SYSTEM = {"version":"2.0.0","description":{"zh":"MUGEN论外参照标准标签系统","en":"MUGEN Null Standard Tag System","ja":"MUGEN論外参照標準タグシステム"},"naming_rule":{"case":{"zh":"帕斯卡命名法","en":"PascalCase","ja":"パスカルケース"},"format":{"zh":"标准英文短语","en":"Standard English Phrase","ja":"標準英語フレーズ"},"multilang_supported":true,"description":{"zh":"仅存储分级（tier_system）、启动技术（trigger_technique）、攻击技术（attack_technique）、效果技术（effect_technique）四类规范化标签，值字段支持多语言（zh/en/ja）","en":"Only stores four standardized categories: tier (tier_system), trigger (trigger_technique), attack (attack_technique), effect (effect_technique). Value fields support multilingual (zh/en/ja)","ja":"格付け（tier_system）、起動技術（trigger_technique）、攻撃技術（attack_technique）、効果技術（effect_technique）の4つのカテゴリのみを保存。値フィールドは多言語（zh/en/ja）をサポート"}},"tier_system":{"Top_Out":{"zh":"论外最上位","en":"SuperNull Top","ja":"論外最上位"},"Lower_Out_C":{"zh":"论外下位C","en":"Null C","ja":"論外下位C"},"Lower_Out_B":{"zh":"论外下位B","en":"Null B","ja":"論外下位B"},"Lower_Out_A":{"zh":"论外下位A","en":"Null A","ja":"論外下位A"},"Mid_Out_C":{"zh":"论外中位C","en":"VoidNull C","ja":"論外中位C"},"Mid_Out_B":{"zh":"论外中位B","en":"VoidNull B","ja":"論外中位B"},"Mid_Out_A":{"zh":"论外中位A","en":"VoidNull A","ja":"論外中位A"},"Upper_Out_C":{"zh":"论外上位C","en":"SuperNull C","ja":"論外上位C"},"Upper_Out_B":{"zh":"论外上位B","en":"SuperNull B","ja":"論外上位B"},"Upper_Out_A":{"zh":"论外上位A","en":"SuperNull A","ja":"論外上位A"}},"trigger_technique":{"PercentN_Trigger":{"zh":"%N启动","en":"%N Trigger","ja":"%N起動"},"FourCA_Trigger":{"zh":"4CA启动","en":"4CA Trigger","ja":"4CA起動"},"StateDef_Overflow_Trigger":{"zh":"StateDef溢出启动","en":"StateDef Overflow Trigger","ja":"StateDefオーバーフロー起動"},"State_Overflow_Trigger":{"zh":"S溢出启动","en":"State Overflow Trigger","ja":"Stateオーバーフロー起動"},"DEF_Overflow_Trigger":{"zh":"DEF溢出启动","en":"DEF Overflow Trigger","ja":"DEFオーバーフロー起動"},"ZIP_Overflow_Trigger":{"zh":"ZIP溢出启动","en":"ZIP Overflow Trigger","ja":"ZIPオーバーフロー起動"},"SFF_Overflow_Trigger":{"zh":"SFF溢出启动","en":"SFF Overflow Trigger","ja":"SFFオーバーフロー起動"},"Alleg40_Hijack_Trigger":{"zh":"Alleg40劫持启动","en":"Alleg40 Hijack Trigger","ja":"Alleg40ハイジャック起動"},"Flag_Overflow_Trigger":{"zh":"Flag溢出启动","en":"Flag Overflow Trigger","ja":"Flagオーバーフロー起動"},"Overdrive_512_Trigger":{"zh":"512超越启动","en":"512 Overdrive Trigger","ja":"512オーバードライブ起動"}},"attack_technique":{"DTC_Fabrication_Attack":{"zh":"DTC型亲捏造","en":"DTC-Type Fabrication Attack","ja":"DTC型親捏造"},"Variable_Expansion_Fabrication_Attack":{"zh":"变量扩张型亲捏造","en":"Variable Expansion Fabrication Attack","ja":"変数拡張型親捏造"},"API_Source_Injection_Attack":{"zh":"API源代码注入攻击","en":"API Source Injection Attack","ja":"APIソース注入攻撃"},"MultiThreaded_API_Attack":{"zh":"多线程API攻击","en":"Multi-threaded API Attack","ja":"マルチスレッドAPI攻撃"}},"effect_technique":{"Death_Manipulation":{"zh":"直死","en":"Death Manipulation","ja":"即死操作"},"Player_Deletion":{"zh":"玩家删除","en":"Player Deletion","ja":"プレイヤー削除"},"Force_Victory":{"zh":"强制胜利","en":"Force Victory","ja":"強制勝利"},"Forced_Damage":{"zh":"强制伤害","en":"Forced Damage","ja":"強制ダメージ"},"Forced_Fall":{"zh":"强制落下","en":"Forced Fall","ja":"強制落下"},"Forced_Grab":{"zh":"强制投","en":"Forced Grab","ja":"強制投げ"},"Forced_Time_Stop":{"zh":"强制时停","en":"Forced Time Stop","ja":"強制時間停止"},"Invincibility_Removal":{"zh":"无敌解除","en":"Invincibility Removal","ja":"無敵解除"},"NOKO_Removal":{"zh":"NOKO解除","en":"NOKO Removal","ja":"NOKO解除"},"Life_Manipulation":{"zh":"生命值操作","en":"Life Manipulation","ja":"ライフ操作"},"CNS_Pointer_Manipulation":{"zh":"CNS指针操作","en":"CNS Pointer Manipulation","ja":"CNSポインタ操作"},"Round_Timer_Manipulation":{"zh":"回合计时器操作","en":"Round Timer Manipulation","ja":"ラウンドタイマー操作"},"Round_State_Manipulation":{"zh":"回合状态操作","en":"Round State Manipulation","ja":"ラウンド状態操作"},"Palette_Manipulation":{"zh":"调色板操作","en":"Palette Manipulation","ja":"パレット操作"},"Intro_Removal":{"zh":"开场解除","en":"Intro Removal","ja":"イントロ削除"},"Timer_Freeze_Removal":{"zh":"计时冻结解除","en":"Timer Freeze Removal","ja":"タイマーフリーズ解除"},"DEF_Protection":{"zh":"DEF保护","en":"DEF Protection","ja":"DEF保護"},"Player_Protection":{"zh":"玩家保护","en":"Player Protection","ja":"プレイヤー保護"},"Omni_Attribute_Attack":{"zh":"全属性攻击","en":"Omni Attribute Attack","ja":"全属性攻撃"},"Resurrection":{"zh":"复活","en":"Resurrection","ja":"復活"}}};
 
   const CONFIG = {
     owner: 'mugen-community',
@@ -90,13 +95,15 @@
   const tierOrder = { top: 0, high: 1, mid: 2, low: 3, unknown: 4 };
   const tierMap = { Top_Out: 'top', Lower_Out: 'low', Mid_Out: 'mid', Upper_Out: 'high' };
 
+  const defaultLang = (window.__LANGS && window.__LANGS[0]) || 'zh';
+
   const state = {
     all: null,
     filtered: [],
     tagIndex: null,
     tierKeys: null,
     loading: false,
-    lang: 'zh'
+    lang: defaultLang
   };
 
   const refs = {
@@ -112,7 +119,7 @@
   };
 
   function getLang() {
-    return localStorage.getItem('lang') || 'zh';
+    return localStorage.getItem('lang') || defaultLang;
   }
 
   function setLang(v) {
@@ -199,17 +206,13 @@
 
   function getLocalizedSection(body, lang) {
     if (!body) return '';
-    const langs = lang === 'ja' ? ['ja', 'jp'] : [lang];
-    for (const l of langs) {
-      const tag = '<!-- ' + l + ' -->';
-      const startIdx = body.indexOf(tag);
-      if (startIdx === -1) continue;
-      const contentStart = startIdx + tag.length;
-      const endIdx = body.indexOf(tag, contentStart);
-      if (endIdx === -1) continue;
-      return body.slice(contentStart, endIdx).trim();
-    }
-    return body;
+    const tag = '<!-- ' + lang + ' -->';
+    const startIdx = body.indexOf(tag);
+    if (startIdx === -1) return body;
+    const contentStart = startIdx + tag.length;
+    const endIdx = body.indexOf(tag, contentStart);
+    if (endIdx === -1) return body;
+    return body.slice(contentStart, endIdx).trim();
   }
 
   function parseCharacter(issue) {
@@ -218,19 +221,20 @@
     const slug = slugify(issue.title) || ('issue-' + issue.number);
     const images = extractAllImages(issue.body);
 
+    const langs = window.__LANGS || ['zh', 'en', 'ja'];
     const tagsByLang = {};
     const summaryByLang = {};
     const bodyByLang = {};
     let defaultTier = 'unknown';
     let defaultLevel = null;
-    for (const lang of ['zh', 'en', 'ja']) {
+    for (const lang of langs) {
       const section = getLocalizedSection(issue.body, lang);
       bodyByLang[lang] = section;
       tagsByLang[lang] = scanTags(section, state.tagIndex);
       const bodyText = section.replace(/^#+\s.*$/gm, '').trim();
       summaryByLang[lang] = bodyText.split(/\n{2,}/)[0]
         ?.replace(/\n/g, ' ').replace(/\s+/g, ' ').slice(0, 120).trim() || '';
-      if (lang === 'zh') {
+      if (lang === langs[0]) {
         const tierInfo = detectTier(tagsByLang[lang], state.tierKeys);
         defaultTier = tierInfo.tier;
         defaultLevel = tierInfo.level;
@@ -436,7 +440,7 @@
       return tierOk && keywordOk;
     }).sort((a, b) => {
       if (tierOrder[a.tier] !== tierOrder[b.tier]) return tierOrder[a.tier] - tierOrder[b.tier];
-      return a.title.localeCompare(b.title, 'zh-Hans-CN');
+      return a.title.localeCompare(b.title, lang);
     });
 
     refs.resultCount.textContent = window.__('resultCount', lang).replace('{n}', state.filtered.length);

@@ -49,13 +49,15 @@
   const tierOrder = { top: 0, high: 1, mid: 2, low: 3, unknown: 4 };
   const tierMap = { Top_Out: 'top', Lower_Out: 'low', Mid_Out: 'mid', Upper_Out: 'high' };
 
+  const defaultLang = (window.__LANGS && window.__LANGS[0]) || 'zh';
+
   const state = {
     all: null,
     filtered: [],
     tagIndex: null,
     tierKeys: null,
     loading: false,
-    lang: 'zh'
+    lang: defaultLang
   };
 
   const refs = {
@@ -71,7 +73,7 @@
   };
 
   function getLang() {
-    return localStorage.getItem('lang') || 'zh';
+    return localStorage.getItem('lang') || defaultLang;
   }
 
   function setLang(v) {
@@ -158,17 +160,13 @@
 
   function getLocalizedSection(body, lang) {
     if (!body) return '';
-    const langs = lang === 'ja' ? ['ja', 'jp'] : [lang];
-    for (const l of langs) {
-      const tag = '<!-- ' + l + ' -->';
-      const startIdx = body.indexOf(tag);
-      if (startIdx === -1) continue;
-      const contentStart = startIdx + tag.length;
-      const endIdx = body.indexOf(tag, contentStart);
-      if (endIdx === -1) continue;
-      return body.slice(contentStart, endIdx).trim();
-    }
-    return body;
+    const tag = '<!-- ' + lang + ' -->';
+    const startIdx = body.indexOf(tag);
+    if (startIdx === -1) return body;
+    const contentStart = startIdx + tag.length;
+    const endIdx = body.indexOf(tag, contentStart);
+    if (endIdx === -1) return body;
+    return body.slice(contentStart, endIdx).trim();
   }
 
   function parseCharacter(issue) {
@@ -177,19 +175,20 @@
     const slug = slugify(issue.title) || ('issue-' + issue.number);
     const images = extractAllImages(issue.body);
 
+    const langs = window.__LANGS || ['zh', 'en', 'ja'];
     const tagsByLang = {};
     const summaryByLang = {};
     const bodyByLang = {};
     let defaultTier = 'unknown';
     let defaultLevel = null;
-    for (const lang of ['zh', 'en', 'ja']) {
+    for (const lang of langs) {
       const section = getLocalizedSection(issue.body, lang);
       bodyByLang[lang] = section;
       tagsByLang[lang] = scanTags(section, state.tagIndex);
       const bodyText = section.replace(/^#+\s.*$/gm, '').trim();
       summaryByLang[lang] = bodyText.split(/\n{2,}/)[0]
         ?.replace(/\n/g, ' ').replace(/\s+/g, ' ').slice(0, 120).trim() || '';
-      if (lang === 'zh') {
+      if (lang === langs[0]) {
         const tierInfo = detectTier(tagsByLang[lang], state.tierKeys);
         defaultTier = tierInfo.tier;
         defaultLevel = tierInfo.level;
@@ -395,7 +394,7 @@
       return tierOk && keywordOk;
     }).sort((a, b) => {
       if (tierOrder[a.tier] !== tierOrder[b.tier]) return tierOrder[a.tier] - tierOrder[b.tier];
-      return a.title.localeCompare(b.title, 'zh-Hans-CN');
+      return a.title.localeCompare(b.title, lang);
     });
 
     refs.resultCount.textContent = window.__('resultCount', lang).replace('{n}', state.filtered.length);

@@ -1,35 +1,15 @@
 ---
-name: 角色投稿
-about: 提交新角色数据到角色数据库
+name: Character Submission
+about: Submit new character data to the character database
 title: "[character] "
 labels: character
 ---
 
-<!-- zh -->
-## 基本信息
+Use `<!-- en -->...<!-- en -->` and `<!-- zh -->...<!-- zh -->` and `<!-- ja -->...<!-- ja -->` wrappers for multilingual content.  
+(Supported language codes: `en`, `zh`, `ja` — add more in `src/i18n/langs.json`)
 
-| 字段 | 值 |
-|------|-----|
-| **作者** | |
-| **来源** | |
-| **启动方式** | |
-| **技术** | |
-| **分级** | |
-| **标签** | |
-| **下载链接** | |
+Example (English section):
 
-## 角色介绍
-
-在此处编写角色描述，支持 **GitHub Flavored Markdown**。
-
-图片可直接拖拽上传到本 Issue，然后在正文中引用：
-
-![示例图片](https://...)
-
-## 备注
-
-其他补充说明。
-<!-- zh -->
 <!-- en -->
 ## Basic Info
 

@@ -6,6 +6,7 @@
   <title><%= title %></title>
   <link rel="stylesheet" href="<%= r('styles.css') %>">
   <link rel="stylesheet" href="<%= r('github-markdown.css') %>">
+  <script src="<%= r('i18n-data.js') %>"></script>
   <script src="<%= r('i18n.js') %>" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
 </head>
@@ -19,9 +20,9 @@
       <div class="header-controls">
         <button id="themeToggle" class="btn" aria-label="Toggle theme">🌙</button>
         <select id="langSelect" class="lang-select">
-          <option value="zh">中文</option>
-          <option value="en">English</option>
-          <option value="ja">日本語</option>
+          <% uiLangs.forEach(function(l) { %>
+          <option value="<%= l %>"><%= langNames[l] || l %></option>
+          <% }) %>
         </select>
       </div>
     </div>

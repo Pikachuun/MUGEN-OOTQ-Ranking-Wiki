@@ -57,6 +57,14 @@ async function build() {
   await fs.copy(path.join(SRC, 'assets', 'github.svg'), path.join(DIST, 'github.svg'));
   await fs.copy(path.join(SRC, 'scripts', 'i18n.js'), path.join(DIST, 'i18n.js'));
 
+  const uiData = await fs.readJson(path.join(SRC, 'i18n', 'ui.json'));
+  const langData = await fs.readJson(path.join(SRC, 'i18n', 'langs.json'));
+  const langNames = langData;
+  const uiLangs = Object.keys(langData);
+  await fs.writeFile(path.join(DIST, 'i18n-data.js'),
+    'window.__UI = ' + JSON.stringify(uiData) + ';\n' +
+    'window.__LANGS = ' + JSON.stringify(uiLangs) + ';');
+
   await fs.ensureDir(path.join(DIST, 'characters'));
   await fs.ensureDir(path.join(DIST, 'glossary'));
 
@@ -66,7 +74,8 @@ async function build() {
     title: 'Characters',
     content: charListContent,
     r: (p) => rel(p, 1),
-    lang: 'zh'
+    lang: 'zh',
+    uiLangs, langNames
   });
   await fs.writeFile(path.join(DIST, 'characters', 'index.html'), charListHtml);
 
@@ -79,7 +88,8 @@ async function build() {
       content: innerContent,
       r: (p) => rel(p, 2),
       lang: 'zh',
-      metaRaw: JSON.stringify(meta)
+      metaRaw: JSON.stringify(meta),
+      uiLangs, langNames
     });
     await fs.writeFile(path.join(DIST, 'glossary', slug, 'index.html'), html);
   }
@@ -98,7 +108,8 @@ async function build() {
     title: 'Glossary',
     content: glossaryListContent,
     r: (p) => rel(p, 1),
-    lang: 'zh'
+    lang: 'zh',
+    uiLangs, langNames
   });
   await fs.writeFile(path.join(DIST, 'glossary', 'index.html'), glossaryListHtml);
 
@@ -107,7 +118,8 @@ async function build() {
     title: 'MUGEN OOTQ Ranking Wiki',
     content: indexContent,
     r: (p) => rel(p, 0),
-    lang: 'zh'
+    lang: 'zh',
+    uiLangs, langNames
   });
   await fs.writeFile(path.join(DIST, 'index.html'), indexHtml);
 
